@@ -11,7 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.util.concurrent.Callable;
 import org.pmw.tinylog.Logger;
 
-import input.InputHandler;
+// import input.InputHandler;
 
 public class WindowManager {
     // check if system type is mac osx/m1 for compatibility:
@@ -60,7 +60,7 @@ public class WindowManager {
             height = vidMode.height();
         }
 
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
+        window = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window!");
         glfwSetFramebufferSizeCallback(window, (window, w, h) -> resized(w, h));

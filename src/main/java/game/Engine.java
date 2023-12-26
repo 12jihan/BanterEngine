@@ -16,7 +16,7 @@ public class Engine {
     Engine(String windowTitle, WindowManager.WindowOptions opts, GameLogic gameLogic) throws Exception {
         this.windowTitle = windowTitle;
         System.out.println("window title: \n" + this.windowTitle);
-        this.window = new WindowManager(this.windowTitle, opts, () -> {
+        window = new WindowManager(this.windowTitle, opts, () -> {
             this.resize();
             return null;
         });
@@ -34,10 +34,11 @@ public class Engine {
 
         while (running && !window.windowShouldClose()) {
             window.pollEvents();
-
+            
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
             deltaFps += (now - initialTime) / timeR;
+            // System.out.println("deltaFps: " + deltaUpdate);
 
             // Put the input in here:
             if (targetFps <= 0 || deltaFps >= 1) {
