@@ -2,6 +2,9 @@ package game;
 
 import display.WindowManager;
 import interfaces.GameLogic;
+import loader.Loader;
+import loader.RawModel;
+import rendering.Renderer;
 
 public class Engine {
     private final WindowManager window;
@@ -12,7 +15,22 @@ public class Engine {
     private boolean running;
     private int targetFps;
     private int targetUps;
-    
+
+    float[] vertices = {
+        // left bottom of triangle
+            -0.5f, 0.5f, 0f,
+            -0.5f, -0.5f, 0f,
+            0.5f, -0.5f, 0f,
+        // right top of triangle
+            0.5f, -0.5f, 0f,
+            0.5f, 0.5f, 0f,
+            -0.5f, 0.5f, 0f
+    };
+
+    Loader loader = new Loader();
+    Renderer renderer = new Renderer();
+    RawModel model = loader.loadToVAO(vertices);
+
     Engine(String windowTitle, WindowManager.WindowOptions opts, GameLogic gameLogic) throws Exception {
         this.windowTitle = windowTitle;
         System.out.println("window title: \n" + this.windowTitle);
@@ -23,7 +41,7 @@ public class Engine {
         this.gameLogic = gameLogic;
         gameLogic.init(window);
     }
-    
+
     private void run() {
         long initialTime = System.currentTimeMillis();
         float timeU = 1000.0f / targetUps;
@@ -34,7 +52,7 @@ public class Engine {
 
         while (running && !window.windowShouldClose()) {
             window.pollEvents();
-            
+
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
             deltaFps += (now - initialTime) / timeR;
@@ -54,6 +72,7 @@ public class Engine {
 
             // Put the renders in here:
             if (targetFps <= 0 || deltaFps >= 1) {
+                renderer.render(model);
                 deltaFps--;
                 window.update();
             }
@@ -69,6 +88,7 @@ public class Engine {
     }
 
     private void cleanup() {
+        loader.cleanup();
         window.cleanup();
     }
 

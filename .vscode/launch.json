@@ -10,7 +10,8 @@
             "request": "launch",
             "mainClass": "game.Main",
             "projectName": "banter",
-            "vmArgs": ["-XstartOnFirstThread","-Dorg.lwjgl.system.stackSize=8192"],
+            "vmArgs": ["-XstartOnFirstThread"],
+            // "vmArgs": ["-XstartOnFirstThread","-Dorg.lwjgl.system.stackSize=8192"],
         },
         // {
         //     "type": "java",

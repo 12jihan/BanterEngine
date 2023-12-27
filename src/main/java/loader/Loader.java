@@ -1,17 +1,19 @@
 package loader;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryStack;
 
 public class Loader {
@@ -19,61 +21,86 @@ public class Loader {
     // This includes the VAO, VBO, and EBO:
     // Still don't know what the fuck a EBO is.
     private int numVertices;
-    private int vao_id;
+    // Random debu setting:
     private boolean weDebug = false;
-    private List<Integer> vboIdList = new ArrayList<>();
 
-    Loader(boolean weDebug) {
-        // Just to debug AKA console log some more shit i don't care about:
-    }
+    // For now I have this here instead because i'm not entirely sure if i need a
+    // list or something else:
+    // private int vao_id;
 
-    Loader() {
-        // Boring old class if there's nothing passed in:
+    // List for VAOs and VBOs:
+    private List<Integer> vaoList = new ArrayList<>();
+    private List<Integer> vboList = new ArrayList<>();
+
+    // Loader(boolean weDebug) {
+    //     // Just to debug AKA console log some more shit i don't care about:
+    // }
+
+    // Loader() {
+    //     // Boring old class if there's nothing passed in:
+    // }
+
+    // I guess it's better to name parameters for the generic shaders since they are static?
+    public RawModel loadToVAO(float[] positions) {
+        // Create and bind VAO:
+        int vao_id = createVAO();
+        // creates a vbo and add it to the bound vao at specified position in said vao
+        createVBO(0, 3, positions);
+        // unbind and return the rawmodel:
+        unbindVAO();
+        // TODO: figure out what positions.length/3 is supposed to be
+        // I'm still not really understanding what the point of it is.
+        // udpate: I think it's because it's a 3d vector so we want to say how many positions there are.
+        return new RawModel(vao_id, positions.length / 3);
     }
 
     // Creating the Vertex Array Object to load vbos in:
     // Most likely what I'mg planning on doing is just having every single vector in
     // it's own VBO|EBO so that I don't have to worry about bullshit that I don't
     // need in this fucking application:
-    void createVAO() {
-        vao_id = glGenVertexArrays();
+    private int createVAO() {
+        // Create a vao then push it into the Vao List and bind the Vao:
+        int vao_id = glGenVertexArrays();
+        vaoList.add(vao_id);
         glBindVertexArray(vao_id);
+        // Some random debug shit:
+        weDebug = true;
         if (weDebug) {
-            System.out.println("VAO created:\n" + "\tVAO_ID: \t" + vao_id + "\n");
+            System.out.println(
+                    "VAO created:\n" +
+                            "\tVAO_ID: \t" +
+                            vao_id +
+                            "\n");
         }
 
-        // For now we aren't going to return this value..
-        // what we'll do instead is set the instance value and use getters:
-        // return vao_id;
+        // Returning the vao_id of the vao created:
+        return vao_id;
     }
 
-    /** 
+    // unbind method for VAO:
+    private void unbindVAO() {
+        glBindVertexArray(0);
+    }
+
+    /**
      * 
-     * @param data : Float Array - for creating and binding to a vbo and adding to a list.
+     * @param data      : Float Array - for creating and binding to a vbo and adding
+     *                  to a list.
+     * @param data_size : Int that states the size of the data stride wise.
      */
-    void createVBO(float[] data) {
+    void createVBO(int attrib_num, int vector_size, float[] data) {
         // get the id of the vbo:
         int vbo_id = glGenBuffers();
-        // Check if there is indeed a VAO ID - otherwise it will just fail and throw an exception:
-        if(vao_id > 0) {
-            // Create memory stack to access for the buffers being created:
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                // Add the buffer's id to a list so that we can keep track:
-                vboIdList.add(vbo_id);
-                // create the buffer so that we can bind it:
-                FloatBuffer dataBuffer = stack.callocFloat(data.length);
-                dataBuffer.put(0, data);
-                // Bind buffer and tell it what to do with the data buffer?
-                glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-                glBufferData(vbo_id, dataBuffer, GL_STATIC_DRAW);
-                // Index in the vertex array will decide entirely where to place the vbo:
-                // Hoping this doesn't shit on me at all.
-                glEnableVertexAttribArray(vboIdList.size() - 1);
-            }
-        }
-
-        // taking this out for now because i'm unsure if I will truely need to re-return the vbo_id
-        // return vbo_id;
+        vboList.add(vbo_id);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+        FloatBuffer dataBuffer = storeDataInFloatBuffer(data);
+        glBufferData(GL_ARRAY_BUFFER, dataBuffer, GL_STATIC_DRAW);
+        // Settings for describing and loading vbo into vao:
+        glVertexAttribPointer(attrib_num, vector_size, GL_FLOAT, false, 0, 0);
+        // I'm not sure the purpose of glEnableVertexAttribArray yet:
+        // glEnableVertexAttribArray(vboList.size() - 1);
+        // Done using the vbo so unbind it:
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     // Gotta figure out the best way to handl the ebos:
@@ -81,21 +108,44 @@ public class Loader {
     // completely diff from VBOs. But I know exactly what it is. Jeeez....
     int createEBO() {
         int ebo_id = 0;
-        // Nothing happening here just yet:
         return ebo_id;
+    }
+
+    // converts out float array into a float buffer for loading into a vbo:
+    private FloatBuffer storeDataInFloatBuffer(float[] data) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer dataBuffer = stack.callocFloat(data.length);
+            // puts the dat into the beginning of the float buffer:
+            dataBuffer.put(0, data);
+            // Flip buffer to prepare it to be read from (common practice with buffers):
+            dataBuffer.flip();
+
+            // return the buffer for use:
+            return dataBuffer;
+        }
+    }
+
+    public void cleanup() {
+        // Delete lists and buffers created:
+        vaoList.forEach(GL30::glDeleteVertexArrays);
+        vboList.forEach(GL30::glDeleteBuffers);
     }
 
     /**
      * Getters/ Setters:
      */
-    // Get current VAO ID:
-    public int getVao_id() {
-        return vao_id;
+    // Doing this instead of the list for now:
+    // public int getVao_id() {
+    // return vao_id;
+    // }
+    // Get list of VAOS:
+    public List<Integer> getVaoList() {
+        return vaoList;
     }
 
     // Get list of VBOS:
-    public List<Integer> getVboIdList() {
-        return vboIdList;
+    public List<Integer> getVboList() {
+        return vboList;
     }
 
 }
