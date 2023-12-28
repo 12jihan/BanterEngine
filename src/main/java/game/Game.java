@@ -10,48 +10,56 @@ import loader.Loader;
 import loader.RawModel;
 import rendering.Renderer;
 
-public class GameLoop {
+public class Game {
     private DisplaySettings win_opts;
     private final WindowManager window;
+    private final Loader loader;
+    private final Renderer renderer;
+    private RawModel model;
+    private boolean running;
 
-    GameLoop() {
+    Game() {
         win_opts = new DisplaySettings();
-        System.out.println("win_opts: " + win_opts);
         window = new WindowManager("test", win_opts, () -> {
             resize();
             return null;
         });
+        loader = new Loader();
+        renderer = new Renderer();
+        running = true;
     }
-
-    // Vertices for testing:
-    float[] vertices = {
-            // left bottom of triangle
-            -0.5f, 0.5f, 0f,
-            -0.5f, -0.5f, 0f,
-            0.5f, -0.5f, 0f,
-            // right top of triangle
-            0.5f, -0.5f, 0f,
-            0.5f, 0.5f, 0f,
-            -0.5f, 0.5f, 0f
-    };
 
     public void run() {
         System.out.println("Banter Engine starting...");
         init();
         loop();
         cleanup();
+        System.out.println("Banter Engine cleaning loader...");
     }
 
     private void init() {
+        // Vertices for testing:
+        float[] vertices = {
+                // left bottom of triangle
+                -0.5f, 0.5f, 0f,
+                -0.5f, -0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                // right top of triangle
+                0.5f, -0.5f, 0f,
+                0.5f, 0.5f, 0f,
+                -0.5f, 0.5f, 0f
+        };
+
         window.init();
+        model = loader.loadToVAO(vertices);
     }
 
     private void loop() {
-        createCapabilities();
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
 
         while (!window.windowShouldClose()) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // Prepare the render:
+            renderer.prepare();
 
             update(); // Update game logic
             render(); // Render graphics
@@ -59,7 +67,8 @@ public class GameLoop {
     }
 
     private void render() {
-        System.out.println("Rendering...");
+        // System.out.println("Rendering...");
+        renderer.render(model);
     }
 
     private void update() {
@@ -67,8 +76,11 @@ public class GameLoop {
     }
 
     private void cleanup() {
-        System.out.println("Banter Engine shutting down...");
+        System.out.println("Banter Engine cleaning...");
+        // renderer.cleanup();
+        loader.cleanup();
         window.cleanup();
+        System.out.println("Banter Engine shutting down...");
     }
 
     private void resize() {

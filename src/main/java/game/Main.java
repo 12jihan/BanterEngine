@@ -10,8 +10,8 @@ import interfaces.GameLogic;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
-        GameLoop gameEng = new GameLoop();
-        gameEng.run();
+        Game game = new Game();
+        game.run();
 
     }
 }
