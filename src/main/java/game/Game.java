@@ -38,6 +38,7 @@ public class Game {
     }
 
     private void init() {
+        window.init();
         // Vertices for testing:
         float[] vertices = {
                 // left bottom of triangle
@@ -50,8 +51,12 @@ public class Game {
                 -0.5f, 0.5f, 0f
         };
 
-        window.init();
-        model = loader.loadToVAO(vertices);
+        int[] indices = {
+            0, 1, 3, // Top left triangle (V0, V1, V3)
+            3, 1, 2 // Bottom right triangle (V3, V1, V2)
+        };
+
+        model = loader.loadToVAO(vertices, indices);
     }
 
     private void loop() {
