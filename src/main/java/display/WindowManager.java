@@ -5,9 +5,12 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.IntBuffer;
 import java.util.concurrent.Callable;
 import org.pmw.tinylog.Logger;
 
@@ -15,34 +18,42 @@ import org.pmw.tinylog.Logger;
 
 public class WindowManager {
     // check if system type is mac osx/m1 for compatibility:
-    private static final boolean SYSCHECK = System.getProperty("os.name").contains("Mac");
     private long window;
     private int height, width;
     private String title;
+    private DisplaySettings win_opts;
     // Have not implemented the mouse input just yet:
     // private InputHandler mouseInput;
     private Callable<Void> resizeFunc;
 
-    public WindowManager(String title, WindowOptions opts, Callable<Void> resizeFunc) {
+    public WindowManager(String title, DisplaySettings win_opts, Callable<Void> resizeFunc) {
         this.title = title;
-        this.height = opts.height;
-        this.width = opts.width;
+        this.height = win_opts.height;
+        this.width = win_opts.width;
         this.resizeFunc = resizeFunc;
+        this.win_opts = win_opts;
+    }
 
-        if (!glfwInit()) {
+    public void init() {
+        // Set the error callback:
+        GLFWErrorCallback.createPrint(System.err).set();
+        // Check if GLFW is initialized:
+        if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
-        }
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-        if (opts.antiAliasing) {
+        // Check if antiAliasing is enabled:
+        if (win_opts.antiAliasing) {
             glfwWindowHint(GLFW_SAMPLES, 4);
         }
+        // Check if the version of OpenGL is 3.2 or greater:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
         // Used for mac compatibility layer - check if mac or something else:
-        if (getSyscheck()) {
+        // if (win_opts.compatibleProfile) <-- used to be this line:
+        if (win_opts.getSyscheck()) {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         } else {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -50,59 +61,51 @@ public class WindowManager {
         }
 
         // Maximize Window Conditional Statement:
-        if (opts.width > 0 && opts.height > 0) {
-            this.width = opts.width;
-            this.height = opts.height;
+        if (win_opts.width > 0 && win_opts.height > 0) {
+            this.width = win_opts.width;
+            this.height = win_opts.height;
         } else {
             glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
             GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             width = vidMode.width();
             height = vidMode.height();
         }
-
+        // Create the window:
         window = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
+        // Check if window is created:
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window!");
+        // Set the resize callback:
         glfwSetFramebufferSizeCallback(window, (window, w, h) -> resized(w, h));
-
+        // Set the error callback:
         glfwSetErrorCallback((int errorCode, long msgPtr) -> Logger.error("Error code [{}], msg [{}]", errorCode,
                 MemoryUtil.memUTF8(msgPtr)));
-
+        // Set the key callback:
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             keyCallBack(key, action);
         });
-
+        // Set the window to be the current context:
         glfwMakeContextCurrent(window);
-        if (opts.fps > 0) {
+        // turn on vsync if fps is greater than 0:
+        if (win_opts.fps > 0) {
             glfwSwapInterval(0);
         } else {
             glfwSwapInterval(1);
         }
-
         glfwShowWindow(window);
 
-        // For the resizing function:
-        int[] arrWidth = new int[1];
-        int[] arrHeight = new int[1];
-        glfwGetFramebufferSize(window, arrWidth, arrHeight);
-        width = arrWidth[0];
-        height = arrHeight[0];
-
-        // init();
-    }
-
-    public void init() {
-
+        // For resizing:
+        IntBuffer bufferWidth = BufferUtils.createIntBuffer(1);
+        IntBuffer bufferHeight = BufferUtils.createIntBuffer(1);
+        glfwGetFramebufferSize(window, bufferWidth, bufferHeight);
+        width = bufferWidth.get(0);
+        height = bufferHeight.get(0);
     }
 
     // updates logic for window manager:
     public void update() {
-
-    }
-
-    // renders window manager assets:
-    public void render() {
-
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     public void cleanup() {
@@ -112,8 +115,7 @@ public class WindowManager {
         GLFWErrorCallback callback = glfwSetErrorCallback(null);
         if (callback != null) {
             callback.free();
-        }
-        ;
+        };
     }
 
     /**
@@ -192,19 +194,5 @@ public class WindowManager {
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
-    }
-
-    public static boolean getSyscheck() {
-        return SYSCHECK;
-    }
-
-    public static class WindowOptions {
-        public int width, height;
-        public int fps;
-        public int target_ups;
-        public boolean compatibleProfile;
-        public boolean antiAliasing;
-        public boolean vsync;
-
     }
 }

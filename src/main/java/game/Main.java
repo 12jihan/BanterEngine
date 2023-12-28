@@ -1,5 +1,6 @@
 package game;
 
+import display.DisplaySettings;
 import display.WindowManager;
 import interfaces.GameLogic;
 
@@ -14,14 +15,8 @@ public class Main implements GameLogic {
     // private float lightAngle;
 
     public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        WindowManager.WindowOptions opts = new WindowManager.WindowOptions();
-        opts.height = 720;
-        opts.width = 1280;
-        Engine gameEng = new Engine("SVNDB0X NGIN", opts, main);
-
-        System.out.println("Banter Engine starting...");
-        gameEng.start();
+        GameLoop gameEng = new GameLoop();
+        gameEng.run();
 
     }
 

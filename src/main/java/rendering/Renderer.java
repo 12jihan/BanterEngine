@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 
 public class Renderer {
 
-    public void init() {
+    public void prepare() {
         glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
     }
