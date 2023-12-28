@@ -190,7 +190,7 @@ public class WindowManager {
     }
 
     public void keyCallBack(int key, int action) {
-        System.out.println("Key:\n" + key + "\nAction:\n" + action);
+        // System.out.println("Key:\n" + key + "\nAction:\n" + action);
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);

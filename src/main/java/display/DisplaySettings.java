@@ -13,13 +13,13 @@ public class DisplaySettings {
         this.width = 1280;
         this.height = 720;
         this.fps = 60;
-        this.target_ups = 30;
+        this.target_ups = 60;
         this.compatibleProfile = true;
-        this.antiAliasing = true;
-        this.vsync = true;
+        this.antiAliasing = false;
+        this.vsync = false;
     }
+
     public boolean getSyscheck() {
-        System.out.println("System check: " + SYSCHECK);
         return SYSCHECK;
     }
 }

@@ -1,8 +1,11 @@
 package game;
 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL.*;
+import static org.lwjgl.opengl.GL11.*;
+
 import display.DisplaySettings;
 import display.WindowManager;
-import interfaces.GameLogic;
 import loader.Loader;
 import loader.RawModel;
 import rendering.Renderer;
@@ -44,7 +47,23 @@ public class GameLoop {
     }
 
     private void loop() {
+        createCapabilities();
+        glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
 
+        while (!window.windowShouldClose()) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            update(); // Update game logic
+            render(); // Render graphics
+        }
+    }
+
+    private void render() {
+        System.out.println("Rendering...");
+    }
+
+    private void update() {
+        window.update();
     }
 
     private void cleanup() {
