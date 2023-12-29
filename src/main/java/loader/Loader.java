@@ -98,7 +98,7 @@ public class Loader {
         FloatBuffer dataBuffer = storeDataInBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, dataBuffer, GL_STATIC_DRAW);
         // Settings for describing and loading vbo into vao:
-        glVertexAttribPointer(attrib_num, vector_size, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         // I'm not sure the purpose of glEnableVertexAttribArray yet:
         // glEnableVertexAttribArray(vboList.size() - 1);
         // Done using the vbo so unbind it:
