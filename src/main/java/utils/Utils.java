@@ -1,9 +1,12 @@
 package utils;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.lwjgl.system.MemoryStack;
 
 public class Utils {
     public static float[] listFloatToArray(List<Float> list) {
@@ -27,5 +30,18 @@ public class Utils {
             throw new RuntimeException("Error reading file [\n\t- " + filePath + "\n]", excp);
         }
         return str;
+    }
+
+    public static FloatBuffer storeDataInBuffer(float[] data) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer dataBuffer = stack.callocFloat(data.length);
+            // puts the dat into the beginning of the float buffer:
+            dataBuffer.put(0, data);
+            // Flip buffer to prepare it to be read from (common practice with buffers):
+            dataBuffer.flip();
+
+            // return the buffer for use:
+            return dataBuffer;
+        }
     }
 }

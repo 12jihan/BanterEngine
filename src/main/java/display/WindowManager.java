@@ -50,7 +50,7 @@ public class WindowManager {
         }
         // Check if the version of OpenGL is 3.2 or greater:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
         // Used for mac compatibility layer - check if mac or something else:
         // if (win_opts.compatibleProfile) <-- used to be this line:

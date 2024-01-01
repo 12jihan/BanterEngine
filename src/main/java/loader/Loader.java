@@ -2,10 +2,12 @@ package loader;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -34,25 +36,30 @@ public class Loader {
     private List<Integer> vboList = new ArrayList<>();
 
     // Loader(boolean weDebug) {
-    //     // Just to debug AKA console log some more shit i don't care about:
+    // // Just to debug AKA console log some more shit i don't care about:
     // }
 
     // Loader() {
-    //     // Boring old class if there's nothing passed in:
+    // // Boring old class if there's nothing passed in:
     // }
 
-    // I guess it's better to name parameters for the generic shaders since they are static?
+    // I guess it's better to name parameters for the generic shaders since they are
+    // static?
     public RawModel loadToVAO(float[] positions, int[] indices) {
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + "VAO + VBO + EBO\n"
+                + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // Create and bind VAO:
         int vao_id = createVAO();
         // creates a vbo and ebo, then add it to the bound vao at specified position:
-        createEBO(indices);
         createVBO(0, 3, positions);
+        createEBO(indices);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        // testing stuff -- do this after the vbo and ebo is created:
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(0);
         // unbind and return the rawmodel:
         unbindVAO();
-        // TODO: figure out what positions.length/3 is supposed to be
-        // I'm still not really understanding what the point of it is.
-        // udpate: I think it's because it's a 3d vector so we want to say how many positions there are.
+        // return id and the indices length in a raw model.
         return new RawModel(vao_id, indices.length);
     }
 
@@ -63,17 +70,13 @@ public class Loader {
     private int createVAO() {
         // Create a vao then push it into the Vao List and bind the Vao:
         int vao_id = glGenVertexArrays();
+        System.out.println(
+                "VAO created:\t" + vao_id);
         vaoList.add(vao_id);
         glBindVertexArray(vao_id);
+        System.out.println(
+                "\t- VAO bound");
         // Some random debug shit:
-        weDebug = true;
-        if (weDebug) {
-            System.out.println(
-                    "VAO created:\n" +
-                            "\tVAO_ID: \t" +
-                            vao_id +
-                            "\n");
-        }
 
         // Returning the vao_id of the vao created:
         return vao_id;
@@ -93,16 +96,19 @@ public class Loader {
     private void createVBO(int attrib_num, int vector_size, float[] data) {
         // get the id of the vbo:
         int vbo_id = glGenBuffers();
+        System.out.println("VBO created:\t" + vbo_id);
         vboList.add(vbo_id);
         glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
         FloatBuffer dataBuffer = storeDataInBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, dataBuffer, GL_STATIC_DRAW);
+        System.out.println("\t- " + "bound and intialized");
         // Settings for describing and loading vbo into vao:
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(0);
         // I'm not sure the purpose of glEnableVertexAttribArray yet:
         // glEnableVertexAttribArray(vboList.size() - 1);
         // Done using the vbo so unbind it:
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     // Gotta figure out the best way to handl the ebos:
@@ -110,10 +116,12 @@ public class Loader {
     // completely diff from VBOs. But I know exactly what it is. Jeeez....
     private void createEBO(int[] indices) {
         int ebo_id = glGenBuffers();
+        System.out.println("EBO created:\t" + ebo_id);
         vboList.add(ebo_id);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
         IntBuffer dataBuffer = storeDataInBuffer(indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, dataBuffer, GL_STATIC_DRAW);
+        System.out.println("\t- " + "bound and intialized");
     }
 
     // converts out int array into a int buffer for loading into a vbo:

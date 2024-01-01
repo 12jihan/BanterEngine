@@ -1,4 +1,4 @@
-package shader;
+package shader_handling;
 
 public class StaticShader {
 

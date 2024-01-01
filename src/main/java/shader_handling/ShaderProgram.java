@@ -1,4 +1,4 @@
-package shader;
+package shader_handling;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
@@ -15,18 +15,29 @@ public class ShaderProgram {
         // Create an array of "shader modules" and add - {shaderCode: String,
         // shaderType: int} for each filepath in shaderModuleDataList:
         try {
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("Shader");
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             vertexShaderId = loadShader(vertexFile, GL_VERTEX_SHADER);
             fragmentShaderId = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
+            System.out.println(
+                    "Vertex Shader ID:\t" +
+                            vertexShaderId +
+                            "\nFragment Shader ID:\t" +
+                            fragmentShaderId);
         } catch (Exception e) {
             System.err.println("Could not load shader:\n\t -" + e.getMessage());
         }
         programId = glCreateProgram();
+        // System.out.println("Shader program created:\t" + programId);
+        System.out.println("Shader program created:\t" + programId);
         if (programId == 0) {
             System.out.print("Could not create Shader");
         }
         // Attach the shaders to the program:
         glAttachShader(programId, vertexShaderId);
         glAttachShader(programId, fragmentShaderId);
+        System.out.println("- program attached:\t");
 
         // Link the shader modules to the program:
         glLinkProgram(programId);
@@ -34,6 +45,8 @@ public class ShaderProgram {
             System.err.println("Could not link shader program!");
             System.exit(-1);
         }
+        System.out.println("- program linked\t");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
         // Still doesn't work on mac?? or do i just need to do more research?
         // Validate the program:
@@ -47,6 +60,7 @@ public class ShaderProgram {
     // start the use of the program:
     public void start() {
         glUseProgram(programId);
+        System.out.println("Used program:\t" + programId);
     };
 
     // Stop the program:
@@ -74,7 +88,6 @@ public class ShaderProgram {
         String shaderSource;
         try {
             shaderSource = Utils.readFile(file);
-            System.out.println("Shader source code:\n\n" + shaderSource);
         } catch (Exception e) {
             System.err.println("Could not read file!\n\t- " + file);
             e.printStackTrace();
@@ -93,13 +106,16 @@ public class ShaderProgram {
             System.err.println("Could not compile shader!");
             System.exit(-1);
         }
+        System.out.println("Shader compiled:\t" + shaderId);
         // creates a shader and returns its ID:
-        return createShader(shaderSource, type);
+        // return createShader(shaderSource, type);
+        return shaderId;
     }
 
     protected static int createShader(String shaderCode, int shaderType) throws Exception {
         // Create shader and return its ID:
         int shaderId = glCreateShader(shaderType);
+        System.out.println("Shader created 2nd time??:\t" + shaderId);
         if (shaderId == 0) {
             throw new Exception("Error creating shader. Type: " + shaderType);
         }
