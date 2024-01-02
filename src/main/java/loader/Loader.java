@@ -55,8 +55,8 @@ public class Loader {
         createEBO(indices);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         // testing stuff -- do this after the vbo and ebo is created:
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(0);
+        // glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        // glEnableVertexAttribArray(0);
         // unbind and return the rawmodel:
         unbindVAO();
         // return id and the indices length in a raw model.
@@ -103,12 +103,12 @@ public class Loader {
         glBufferData(GL_ARRAY_BUFFER, dataBuffer, GL_STATIC_DRAW);
         System.out.println("\t- " + "bound and intialized");
         // Settings for describing and loading vbo into vao:
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(attrib_num, vector_size, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(attrib_num);
         // I'm not sure the purpose of glEnableVertexAttribArray yet:
         // glEnableVertexAttribArray(vboList.size() - 1);
         // Done using the vbo so unbind it:
-        // glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     // Gotta figure out the best way to handl the ebos:

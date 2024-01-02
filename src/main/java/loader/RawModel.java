@@ -8,6 +8,7 @@ public class RawModel {
     public RawModel(int vaoID, int vertexCount) {
         this.vaoID = vaoID;
         this.vertexCount = vertexCount;
+        System.out.println("RawModel created:\t" + vaoID + "\t" + vertexCount);
     }
 
     /**

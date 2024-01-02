@@ -1,22 +1,14 @@
 package shader_handling;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import utils.Utils;
 
-public class ShaderProgram {
-
+public class Shadering {
     private String vertSrc;
     private String fragSrc;
     private int shaderProgramId;
@@ -31,7 +23,7 @@ public class ShaderProgram {
         // Read src files:
         vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/vertex.glsl");
         fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/fragment.glsl");
-
+        
         create_shader(vertSrc, GL_VERTEX_SHADER);
         create_shader(fragSrc, GL_FRAGMENT_SHADER);
         create_program();
@@ -75,26 +67,22 @@ public class ShaderProgram {
             System.exit(-1);
         }
 
-        /**
-         * There's supposed to be a validation layer but I don't think it works well
-         * with mac m1 machines.
-         */
+        /** 
+         * There's supposed to be a validation layer but I don't think it works well with mac m1 machines.
+        */
     }
 
     public void render(int vao) {
-
-        // Use this to render in wireframe mode:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
         // use the program
         glUseProgram(shaderProgramId);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        // completely optional to unbind the vao:
+        //completely optional to unbind the vao:
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);
     }
+
 
     public void clean() {
         glUseProgram(0);

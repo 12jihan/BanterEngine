@@ -1,7 +1,10 @@
 package shader_handling;
 
+import static org.lwjgl.opengl.GL11.glAccum;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
 public class VAO {
-    public int vao_id;
+    private int vao_id;
 
     public VAO() {
 
@@ -11,8 +14,13 @@ public class VAO {
 
     }
 
-    public void bind() {
+    public int create() {
+        vao_id = glGenVertexArrays();
+        return vao_id;
+    }
 
+    public void bind() {
+        
     }
 
     public void unbind() {

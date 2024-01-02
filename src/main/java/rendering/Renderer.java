@@ -6,8 +6,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 import loader.RawModel;
 
-import static org.lwjgl.opengl.GL11.glClear;
-
 public class Renderer {
 
     public void prepare() {
@@ -16,12 +14,9 @@ public class Renderer {
     }
 
     public void render(RawModel model) {
-        System.out.println("Binding VAO:\t" + model.getVaoID());
         glBindVertexArray(model.getVaoID());
-        // glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // glDisableVertexAttribArray(0);
-        // glBindVertexArray(0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+        glDisableVertexAttribArray(0);
     }
 }
