@@ -1,6 +1,5 @@
-package shader_handling;
+package loader;
 
-import static org.lwjgl.opengl.GL11.glAccum;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class VAO {

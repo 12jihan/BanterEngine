@@ -8,7 +8,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.IntBuffer;

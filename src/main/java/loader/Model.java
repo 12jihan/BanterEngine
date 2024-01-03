@@ -1,14 +1,14 @@
 package loader;
 
-public class RawModel {
+public class Model {
 
     private int vaoID;
     private int vertexCount;
 
-    public RawModel(int vaoID, int vertexCount) {
+    public Model(int vaoID, int vertexCount) {
         this.vaoID = vaoID;
         this.vertexCount = vertexCount;
-        System.out.println("RawModel created:\t" + vaoID + "\t" + vertexCount);
+        System.out.println("Model created:\t" + vaoID + "\t" + vertexCount);
     }
 
     /**

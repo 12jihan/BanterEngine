@@ -1,4 +1,4 @@
-package shader_handling;
+package loader;
 
 public class VBO {
     public int vbo_id;

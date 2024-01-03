@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import loader.RawModel;
+import loader.Model;
 
 public class Renderer {
 
@@ -13,7 +13,7 @@ public class Renderer {
         glClearColor(0f, 0.2f, 0f, 0f);
     }
 
-    public void render(RawModel model) {
+    public void render(Model model) {
         glBindVertexArray(model.getVaoID());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

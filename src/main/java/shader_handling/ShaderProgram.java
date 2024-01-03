@@ -107,7 +107,6 @@ public class ShaderProgram {
 
     public void wired() {
         wired = !wired;
-        System.out.println(wired);
     }
 
     public void clean() {
