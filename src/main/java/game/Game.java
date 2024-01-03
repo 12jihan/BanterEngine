@@ -25,7 +25,7 @@ import utils.Utils;
 public class Game {
     private DisplaySettings win_opts;
     private final WindowManager window;
-    private final Loader loader;
+    // private final Loader loader;
     private final Renderer renderer;
     private ShaderProgram shader;
     private RawModel model;
@@ -43,11 +43,15 @@ public class Game {
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
-        window = new WindowManager("test", win_opts, () -> {
+        window = new WindowManager("test", win_opts, 
+        () -> {
             resize();
             return null;
+        },
+        () -> {
+            wired();
+            return null;
         });
-        loader = new Loader();
         renderer = new Renderer();
         shader = new ShaderProgram();
         shadering = new Shadering();
@@ -106,8 +110,7 @@ public class Game {
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         // renderer.cleanup();
-        shadering.clean();
-        loader.cleanup();
+        shader.clean();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
@@ -116,6 +119,10 @@ public class Game {
         int width = window.getWidth();
         int height = window.getHeight();
         System.out.println("Resizing to:\n\t- " + "x: " + width + ", y: " + height);
+    }
+
+    public void wired() {
+        shader.wired();
     }
 
 }

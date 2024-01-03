@@ -26,12 +26,15 @@ public class WindowManager {
     // Have not implemented the mouse input just yet:
     // private InputHandler mouseInput;
     private Callable<Void> resizeFunc;
+    private Callable<Void> keyInputFunc;
 
-    public WindowManager(String title, DisplaySettings win_opts, Callable<Void> resizeFunc) {
+    public WindowManager(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
+            Callable<Void> keyInputFunc) {
         this.title = title;
         this.height = win_opts.height;
         this.width = win_opts.width;
         this.resizeFunc = resizeFunc;
+        this.keyInputFunc = keyInputFunc;
         this.win_opts = win_opts;
     }
 
@@ -116,7 +119,8 @@ public class WindowManager {
         GLFWErrorCallback callback = glfwSetErrorCallback(null);
         if (callback != null) {
             callback.free();
-        };
+        }
+        ;
     }
 
     /**
@@ -195,5 +199,14 @@ public class WindowManager {
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
+        if (key == GLFW_KEY_HOME && action == GLFW_RELEASE) {
+            try {
+                // Attempt to call the key callback:
+                keyInputFunc.call();
+                System.out.println(key);
+            } catch (Exception e) {
+                Logger.error("Error with keycall back:\n\t -", e);
+            }
+        };
     }
 }

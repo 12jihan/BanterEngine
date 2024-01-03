@@ -1,10 +1,14 @@
 package shader_handling;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL20.*;
@@ -17,6 +21,7 @@ import utils.Utils;
 
 public class ShaderProgram {
 
+    boolean wired = false;
     private String vertSrc;
     private String fragSrc;
     private int shaderProgramId;
@@ -82,10 +87,16 @@ public class ShaderProgram {
     }
 
     public void render(int vao) {
-
+        glClearColor(0f, 0f, 0f, 0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Use this to render in wireframe mode:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+        if (wired) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            System.out.println("Wired:\t" + wired);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            System.out.println("Wired:\t" + wired);
+        }
         // use the program
         glUseProgram(shaderProgramId);
         glBindVertexArray(vao);
@@ -94,6 +105,11 @@ public class ShaderProgram {
         // completely optional to unbind the vao:
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);
+    }
+
+    public void wired() {
+        wired = !wired;
+        System.out.println(wired);
     }
 
     public void clean() {

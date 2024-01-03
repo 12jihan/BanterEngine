@@ -2,6 +2,7 @@ package loader;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -47,7 +48,7 @@ public class Mesh {
 
             FloatBuffer vbobuf = stack.callocFloat(positions.length);
             vbobuf.put(positions).flip();
-            glBufferData(GL_ARRAY_BUFFER, vbobuf, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vbobuf, GL_DYNAMIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
             glEnableVertexAttribArray(0);
             // Unbind the VBO after use:
@@ -58,7 +59,7 @@ public class Mesh {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
             IntBuffer intbuf = stack.callocInt(indices.length);
             intbuf.put(indices).flip();
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, intbuf, GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, intbuf, GL_DYNAMIC_DRAW);
         }
 
     }
