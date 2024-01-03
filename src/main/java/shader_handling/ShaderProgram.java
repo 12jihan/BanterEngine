@@ -92,10 +92,8 @@ public class ShaderProgram {
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            System.out.println("Wired:\t" + wired);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            System.out.println("Wired:\t" + wired);
         }
         // use the program
         glUseProgram(shaderProgramId);
