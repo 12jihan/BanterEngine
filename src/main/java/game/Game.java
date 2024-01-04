@@ -5,9 +5,10 @@ import static org.lwjgl.opengl.GL11.*;
 import display.DisplaySettings;
 import display.WindowManager;
 import loader.Mesh;
-import loader.Model;
+import models.Model;
+import models.Texture;
 import rendering.Renderer;
-import shader_handling.ShaderProgram;
+import shaders.ShaderProgram;
 
 public class Game {
     private DisplaySettings win_opts;
@@ -15,6 +16,7 @@ public class Game {
     private ShaderProgram shader;
     private Model model;
     private Mesh mesh;
+    private Texture texture;
     private boolean running;
 
     Game() throws Exception {
@@ -47,19 +49,28 @@ public class Game {
 
     private void init() throws Exception {
         // Vertices for testing:
-        float[] vertices = {
-                -0.5f, 0.5f, 0f, // V0
-                -0.5f, -0.5f, 0f, // V1
-                0.5f, -0.5f, 0f, // V2
-                0.5f, 0.5f, 0f, // V3
+        float[] positions = new float[] {
+                -0.5f, 0.5f, 0.0f,
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f,
         };
-        int[] indices = {
-                0, 1, 3, // Top left triangle (V0, V1, V3)
-                3, 1, 2 // Bottom right triangle (V3, V1, V2)
+
+        float[] colors = new float[] {
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
         };
+
+        int[] indices = new int[] {
+                0, 1, 3, 3, 1, 2,
+        };
+
         window.init();
         shader.init();
-        mesh.init(vertices, indices);
+        mesh.init(positions, colors, indices);
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
 
     }
 
@@ -75,6 +86,7 @@ public class Game {
         // renderer.prepare();
         // shader.useProgram();
         // renderer.render(model);
+        glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
         shader.render(mesh.getVaoList().get(0));
     }
 
