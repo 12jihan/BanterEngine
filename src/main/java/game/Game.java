@@ -8,7 +8,7 @@ import loader.Mesh;
 import models.Model;
 import models.Texture;
 import rendering.Renderer;
-import shaders.ShaderProgram;
+import shader.ShaderProgram;
 
 public class Game {
     private DisplaySettings win_opts;
@@ -70,7 +70,6 @@ public class Game {
         window.init();
         shader.init();
         mesh.init(positions, colors, indices);
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
 
     }
 
@@ -86,7 +85,6 @@ public class Game {
         // renderer.prepare();
         // shader.useProgram();
         // renderer.render(model);
-        glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
         shader.render(mesh.getVaoList().get(0));
     }
 

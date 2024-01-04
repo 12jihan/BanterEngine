@@ -1,4 +1,4 @@
-package shaders;
+package shader;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -52,8 +52,8 @@ public class ShaderProgram {
         glShaderSource(shaderId, shaderSrc);
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
-            System.out.println(glGetShaderInfoLog(shaderId, 500));
-            System.err.println("Could not compile vert shader!");
+            System.err.println("\nCould not compile vert shader:");
+            System.err.println( "\t- " + glGetShaderInfoLog(shaderId, 500));
             System.exit(-1);
         }
         System.out.println("Shader compiled succesfully:\t" + shaderId);
@@ -77,7 +77,8 @@ public class ShaderProgram {
 
         glLinkProgram(shaderProgramId);
         if (glGetProgrami(shaderProgramId, GL_LINK_STATUS) == GL_FALSE) {
-            System.err.println("Could not link shader program!");
+            System.err.println("\nCould not link shader program:\n");
+            System.err.println("\t- " + glGetProgramInfoLog(shaderProgramId, 500));
             System.exit(-1);
         }
 

@@ -7,10 +7,9 @@ import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.system.MemoryStack;
 
+
 import models.Texture;
-
 import org.lwjgl.opengl.GL30;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -32,18 +31,27 @@ public class Mesh {
         glBindVertexArray(vao_id);
         // Create that VBO:
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int vbo_id = glGenBuffers();
-            System.out.println("VBO ID:\t" + vbo_id);
-            vboList.add(vbo_id);
-            // Bind the VBO:
-            glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-            FloatBuffer vbobuf = stack.callocFloat(positions.length);
-            vbobuf.put(positions).flip();
-            glBufferData(GL_ARRAY_BUFFER, vbobuf, GL_DYNAMIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-            glEnableVertexAttribArray(0);
-            // Unbind the VBO after use:
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // (location = 0):
+            VBO loc0 = new VBO("position", 0, 3, positions);
+            vboList.add(loc0.getVboId());
+            loc0 = null;
+            // (location = 1):
+            VBO loc1 = new VBO("colors", 1, 3, colors);
+            vboList.add(loc1.getVboId());
+            loc1 = null;
+            // (location = 1):
+            // vbo_id = glGenBuffers();
+            // vboList.add(vbo_id);
+            // System.out.println("VBO ID:\t" + vbo_id);
+            // glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+            // FloatBuffer colors_buffer = stack.callocFloat(colors.length);
+            // colors_buffer.put(colors).flip();
+            // glBufferData(GL_ARRAY_BUFFER, colors_buffer, GL_DYNAMIC_DRAW);
+            // glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+            // glEnableVertexAttribArray(1);
+            // // Unbind the VBO after use:
+            // glBindBuffer(GL_ARRAY_BUFFER, 0);
+            
 
             int ebo = glGenBuffers();
             System.out.println("EBO ID:\t" + ebo);
@@ -53,9 +61,10 @@ public class Mesh {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, intbuf, GL_DYNAMIC_DRAW);
         }
 
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
-        textureList.add(texture.getTextureId());
-        texture.bind();
+        // texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
+        // textureList.add(texture.getTextureId());
+        // texture.bind();
+        System.out.println("VBO List:\n\t" + vboList);
 
 
     }

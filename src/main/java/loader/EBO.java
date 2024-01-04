@@ -1,5 +1,58 @@
 package loader;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import org.lwjgl.system.MemoryStack;
+
 public class EBO {
+    private String descriptor;
+    private int vboId;
+
+    public EBO(String descriptor, int index, int size, float[] vertices) {
+        create();
+        bind();
+        create_and_fill_buffer(vertices);
+        glVertexAttribPointer(index, size, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(index);
+        unbind();
+    }
+
+    private void create() {
+        vboId = glGenBuffers();
+        System.out.println("VBO ID:\t" + vboId);
+    }
+    private void bind() {
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+    }
+
+    private void create_and_fill_buffer(int[] indices) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.callocInt(indices.length);
+            buf.put(indices).flip();
+            glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
+        }
+    }
+
+
+    // Unbind the VBO after use:
+    private void unbind() {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    public void delete(int vbo_id) {
+        glDeleteBuffers(vbo_id);
+    }
+
+    public int getEboId() {
+        return vboId;
+    }
+
+    public String getDescriptor() {
+        return descriptor;
+    }
 
 }
