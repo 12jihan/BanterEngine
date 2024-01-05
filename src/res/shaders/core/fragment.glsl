@@ -12,5 +12,5 @@ out vec4 fragColor;
 
 void main(void) {
     // fragColor = vec4(out_color, 1.0);
-    fragColor = texture(texture1, out_texture_coords) * vec4(out_color, 1.0);
+    fragColor = texture(texture1, out_texture_coords);
 }

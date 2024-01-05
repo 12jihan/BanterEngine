@@ -1,4 +1,4 @@
-package shader;
+package rendering;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -19,28 +19,23 @@ import java.util.List;
 
 import utils.Utils;
 
-public class ShaderProgram {
-
-    boolean wired = false;
+public class Shader {
     private String vertSrc;
     private String fragSrc;
     private int shaderProgramId;
-    private int textureID;
     // Idea for mapping shaders to programs:
     List<Integer> shaderList = new ArrayList<>();
     List<Integer> programList = new ArrayList<>();
 
-    public void init(int textureID) {
-        // Read src files:
-        this.textureID = textureID;
-        vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/vertex.glsl");
-        fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/fragment.glsl");
+    public void init() {
+        vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/res/shaders/core/vertex.glsl");
+        fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/res/shaders/core/fragment.glsl");
         create_shader(vertSrc, GL_VERTEX_SHADER);
         create_shader(fragSrc, GL_FRAGMENT_SHADER);
         create_program();
     }
 
-    public void create_shader(String shaderSrc, int type) {
+    private void create_shader(String shaderSrc, int type) {
         int shaderId = glCreateShader(type);
         glShaderSource(shaderId, shaderSrc);
         glCompileShader(shaderId);
@@ -52,7 +47,7 @@ public class ShaderProgram {
         shaderList.add(shaderId);
     }
 
-    public void create_program() {
+    private void create_program() {
         shaderProgramId = glCreateProgram();
         if (shaderProgramId == 0) {
             System.err.println("Shader did not create shader!");
@@ -77,27 +72,9 @@ public class ShaderProgram {
          */
     }
 
-    public void render(int vao) {
-        glClearColor(0f, 0f, 0f, 0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // Use this to render in wireframe mode:
-        if (wired) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
+    public void use() {
         // use the program
         glUseProgram(shaderProgramId);
-        // TODO: Texture:
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        // completely optional to unbind the vao:
-        glBindVertexArray(0);
-        glDisableVertexAttribArray(0);
     }
 
     public void clean() {
@@ -112,7 +89,4 @@ public class ShaderProgram {
         }
     }
 
-    public void wired() {
-        wired = !wired;
-    }
 }

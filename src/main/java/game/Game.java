@@ -2,20 +2,22 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import Model.Mesh;
 import display.DisplaySettings;
 import display.WindowManager;
+import models.Mesh;
 import models.Model;
 import models.Texture;
 import rendering.Renderer;
-import shader.ShaderProgram;
+import rendering.Scene;
+import rendering.Shader;
 
 public class Game {
     private DisplaySettings win_opts;
     private final WindowManager window;
-    private ShaderProgram shader;
+    private Shader shader;
     private Model model;
     private Mesh mesh;
+    private Scene scene;
     private Texture texture;
     private boolean running;
 
@@ -34,8 +36,9 @@ public class Game {
                 });
         // Reimplement this later:
         // renderer = new Renderer();
-        shader = new ShaderProgram();
+        shader = new Shader();
         mesh = new Mesh();
+        scene = new Scene();
         running = true;
     }
 
@@ -48,39 +51,8 @@ public class Game {
     }
 
     private void init() throws Exception {
-        // Vertices for testing:
-        float[] positions = new float[] {
-                -0.5f, 0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.5f, 0.5f, 0.0f,
-        };
-
-        float[] colors = new float[] {
-                0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
-        };
-
-        int[] indices = new int[] {
-                0, 1, 3, 
-                3, 1, 2,
-        };
-
-        int[] texture_coords = new int[] {
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-        };
-
         window.init();
-        // texture
-        Texture texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
-        shader.init(texture.getTextureId());
-        mesh.init(positions, colors, texture_coords, indices);
-
+        scene.init();
 
     }
 
@@ -93,10 +65,7 @@ public class Game {
     }
 
     private void render() {
-        // renderer.prepare();
-        // shader.useProgram();
-        // renderer.render(model);
-        shader.render(mesh.getVaoId());
+        scene.render();
     }
 
     private void update() {
@@ -118,7 +87,8 @@ public class Game {
     }
 
     public void wired() {
-        shader.wired();
+        System.out.println("Wireframe mode toggled!");
+        scene.wired();
     }
 
 }

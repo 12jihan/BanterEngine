@@ -1,4 +1,4 @@
-package Model;
+package models;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -6,9 +6,6 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.system.MemoryStack;
-
-
-import models.Texture;
 import org.lwjgl.opengl.GL30;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,13 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mesh {
-    // List for VAOs and Buffers:
-    private List<Integer> vboList = new ArrayList<>();
-    private List<Integer> textureList = new ArrayList<>();
+    // IDs and List for VAO and Buffers:
     private int vao_id;
-
-    // Texture:
-    private Texture texture;
+    private List<Integer> vboList = new ArrayList<>();
 
     public void init(float[] positions, float[] colors, int[] texture_coords, int[] indices) {
         vao_id = glGenVertexArrays();
@@ -51,13 +44,7 @@ public class Mesh {
         System.out.println("VBO List:\n\t" + vboList);
     }
 
-    public Object getTexture() {
-        
-        return null;
-    }
-
     public void clean() {
-        textureList.forEach(GL30::glDeleteTextures);
         vboList.forEach(GL30::glDeleteBuffers);
         glDeleteVertexArrays(vao_id);
     }
@@ -68,9 +55,5 @@ public class Mesh {
 
     public List<Integer> getVboList() {
         return vboList;
-    }
-
-    public List<Integer> getTextureList() {
-        return textureList;
     }
 }
