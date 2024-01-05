@@ -10,7 +10,7 @@ import interfaces.GameLogic;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
-        Game game = new Game();
-        game.run();
+        Game engine = new Game();
+        engine.run();
     }
 }

@@ -1,4 +1,4 @@
-package loader;
+package Model;
 
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 

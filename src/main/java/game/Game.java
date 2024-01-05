@@ -2,9 +2,9 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import Model.Mesh;
 import display.DisplaySettings;
 import display.WindowManager;
-import loader.Mesh;
 import models.Model;
 import models.Texture;
 import rendering.Renderer;
@@ -64,12 +64,23 @@ public class Game {
         };
 
         int[] indices = new int[] {
-                0, 1, 3, 3, 1, 2,
+                0, 1, 3, 
+                3, 1, 2,
+        };
+
+        int[] texture_coords = new int[] {
+                0, 0,
+                0, 1,
+                1, 1,
+                1, 0,
         };
 
         window.init();
-        shader.init();
-        mesh.init(positions, colors, indices);
+        // texture
+        Texture texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
+        shader.init(texture.getTextureId());
+        mesh.init(positions, colors, texture_coords, indices);
+
 
     }
 

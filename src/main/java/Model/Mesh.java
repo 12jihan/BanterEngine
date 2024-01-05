@@ -1,4 +1,4 @@
-package loader;
+package Model;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -24,21 +24,24 @@ public class Mesh {
     // Texture:
     private Texture texture;
 
-    public void init(float[] positions, float[] colors, int[] indices) {
+    public void init(float[] positions, float[] colors, int[] texture_coords, int[] indices) {
         vao_id = glGenVertexArrays();
         // vaoList.add(vao_id);
         System.out.println("VAO ID:\t" + vao_id);
         glBindVertexArray(vao_id);
         // Create that VBO:
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            // (location = 0):
-            VBO loc0 = new VBO("position", 0, 3, positions);
+            // positions (location = 0):
+            VBO loc0 = new VBO("positions", 0, 3, positions);
             vboList.add(loc0.getVboId());
-            // (location = 1):
+
+            // colors (location = 1):
             VBO loc1 = new VBO("colors", 1, 3, colors);
             vboList.add(loc1.getVboId());
             
-            
+            // texture_coords (location = 2):
+            VBO loc2 = new VBO("texture_coords", 2, 2, colors);
+            vboList.add(loc2.getVboId());
             
             // EBO for indices:
             // (location = xxx):

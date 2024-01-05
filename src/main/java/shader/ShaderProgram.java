@@ -25,12 +25,14 @@ public class ShaderProgram {
     private String vertSrc;
     private String fragSrc;
     private int shaderProgramId;
+    private int textureID;
     // Idea for mapping shaders to programs:
     List<Integer> shaderList = new ArrayList<>();
     List<Integer> programList = new ArrayList<>();
 
-    public void init() {
+    public void init(int textureID) {
         // Read src files:
+        this.textureID = textureID;
         vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/vertex.glsl");
         fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/fragment.glsl");
         create_shader(vertSrc, GL_VERTEX_SHADER);
@@ -86,6 +88,10 @@ public class ShaderProgram {
         }
         // use the program
         glUseProgram(shaderProgramId);
+        // TODO: Texture:
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
