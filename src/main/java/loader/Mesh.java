@@ -17,16 +17,16 @@ import java.util.List;
 
 public class Mesh {
     // List for VAOs and Buffers:
-    private List<Integer> vaoList = new ArrayList<>();
     private List<Integer> vboList = new ArrayList<>();
     private List<Integer> textureList = new ArrayList<>();
+    private int vao_id;
 
     // Texture:
     private Texture texture;
 
     public void init(float[] positions, float[] colors, int[] indices) {
-        int vao_id = glGenVertexArrays();
-        vaoList.add(vao_id);
+        vao_id = glGenVertexArrays();
+        // vaoList.add(vao_id);
         System.out.println("VAO ID:\t" + vao_id);
         glBindVertexArray(vao_id);
         // Create that VBO:
@@ -45,13 +45,7 @@ public class Mesh {
             EBO ebo = new EBO("indices", indices);
             vboList.add(ebo.getEboId());
         }
-
-        // texture = new Texture("/Users/jareemhoff/dev/java/banter/src/resources/textures/grass.png");
-        // textureList.add(texture.getTextureId());
-        // texture.bind();
         System.out.println("VBO List:\n\t" + vboList);
-
-
     }
 
     public Object getTexture() {
@@ -62,11 +56,11 @@ public class Mesh {
     public void clean() {
         textureList.forEach(GL30::glDeleteTextures);
         vboList.forEach(GL30::glDeleteBuffers);
-        vaoList.forEach(GL30::glDeleteVertexArrays);
+        glDeleteVertexArrays(vao_id);
     }
 
-    public List<Integer> getVaoList() {
-        return vaoList;
+    public int getVaoId() {
+        return vao_id;
     }
 
     public List<Integer> getVboList() {

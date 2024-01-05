@@ -30,6 +30,7 @@ public class EBO {
 
     private void create() {
         eboId = glGenBuffers();
+        System.out.println("EBO ID:\t" + eboId);
     }
     private void bind() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);

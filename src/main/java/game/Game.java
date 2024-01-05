@@ -85,7 +85,7 @@ public class Game {
         // renderer.prepare();
         // shader.useProgram();
         // renderer.render(model);
-        shader.render(mesh.getVaoList().get(0));
+        shader.render(mesh.getVaoId());
     }
 
     private void update() {
