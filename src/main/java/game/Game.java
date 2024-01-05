@@ -21,7 +21,7 @@ public class Game {
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
-        window = new WindowManager("test", win_opts,
+        window = new WindowManager("Banter Engine", win_opts,
                 // Auto resizes:
                 () -> {
                     resize();

@@ -1,6 +1,14 @@
 package loader;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.FloatBuffer;
@@ -10,37 +18,35 @@ import org.lwjgl.system.MemoryStack;
 
 public class EBO {
     private String descriptor;
-    private int vboId;
+    private int eboId;
 
-    public EBO(String descriptor, int index, int size, float[] vertices) {
+    public EBO(String descriptor, int[] indices) {
         create();
         bind();
-        create_and_fill_buffer(vertices);
-        glVertexAttribPointer(index, size, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(index);
-        unbind();
+        create_and_fill_buffer(indices);
+        // Can't unbind ???
+        // unbind();
     }
 
     private void create() {
-        vboId = glGenBuffers();
-        System.out.println("VBO ID:\t" + vboId);
+        eboId = glGenBuffers();
     }
     private void bind() {
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
     }
 
     private void create_and_fill_buffer(int[] indices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buf = stack.callocInt(indices.length);
             buf.put(indices).flip();
-            glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         }
     }
 
 
-    // Unbind the VBO after use:
-    private void unbind() {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // Unbind the EBO after use:
+    public void unbind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     public void delete(int vbo_id) {
@@ -48,7 +54,7 @@ public class EBO {
     }
 
     public int getEboId() {
-        return vboId;
+        return eboId;
     }
 
     public String getDescriptor() {

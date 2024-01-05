@@ -39,7 +39,7 @@ public class VBO {
 
 
     // Unbind the VBO after use:
-    private void unbind() {
+    public void unbind() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

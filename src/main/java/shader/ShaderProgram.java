@@ -26,9 +26,6 @@ public class ShaderProgram {
     private String fragSrc;
     private int shaderProgramId;
     // Idea for mapping shaders to programs:
-    // Still not sure how this is going to work but it will come in time:
-    // private Map<Integer, Set<Integer>> programToShadersMap = new HashMap<>();
-    // private Set<Integer> programIds = new HashSet<>();
     List<Integer> shaderList = new ArrayList<>();
     List<Integer> programList = new ArrayList<>();
 
@@ -36,19 +33,13 @@ public class ShaderProgram {
         // Read src files:
         vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/vertex.glsl");
         fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/resources/fragment.glsl");
-
         create_shader(vertSrc, GL_VERTEX_SHADER);
         create_shader(fragSrc, GL_FRAGMENT_SHADER);
         create_program();
-        System.out.println("Shader List:\n\t" + shaderList);
-        System.out.println("Program, List:\n\t" + programList);
-        // programToShadersMap.put(shaderProgramId, new HashSet<>(shaderList));
-        // System.out.println("Program to Shaders Map:\n\t" + programList);
     }
 
     public void create_shader(String shaderSrc, int type) {
         int shaderId = glCreateShader(type);
-        System.out.println("shader created:\t" + shaderId + " | " + type);
         glShaderSource(shaderId, shaderSrc);
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
@@ -56,9 +47,7 @@ public class ShaderProgram {
             System.err.println( "\t- " + glGetShaderInfoLog(shaderId, 500));
             System.exit(-1);
         }
-        System.out.println("Shader compiled succesfully:\t" + shaderId);
         shaderList.add(shaderId);
-
     }
 
     public void create_program() {
@@ -68,11 +57,9 @@ public class ShaderProgram {
             System.exit(-1);
         }
         programList.add(shaderProgramId);
-        System.out.println("Shader program created:\t" + shaderProgramId);
-
+        // Attach shaders to program:
         for (int item : shaderList) {
             glAttachShader(shaderProgramId, item);
-            System.out.println("Shader attached:\t" + item);
         }
 
         glLinkProgram(shaderProgramId);
@@ -83,7 +70,7 @@ public class ShaderProgram {
         }
 
         /**
-         * There's supposed to be a validation layer but I don't think it works well
+         * There's supposed to be a validation layer here but I don't think it works well
          * with mac m1 machines.
          */
     }
@@ -110,16 +97,13 @@ public class ShaderProgram {
     public void clean() {
         glUseProgram(0);
         for (int item : shaderList) {
-            System.out.println("Shader detached and deleted:\t" + item);
             glDetachShader(shaderProgramId, item);
             glDeleteShader(item);
         }
 
         for (int item : programList) {
-            System.out.println("Shader program deleted:\t" + item);
             glDeleteProgram(item);
         }
-        System.out.println("Shader program wiped clean!");
     }
 
     public void wired() {
