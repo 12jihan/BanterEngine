@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import org.lwjgl.system.MemoryStack;
 
@@ -13,6 +14,15 @@ public class VBO {
     private int vboId;
 
     public VBO(String descriptor, int index, int size, float[] vertices) {
+        create();
+        bind();
+        create_and_fill_buffer(vertices);
+        glVertexAttribPointer(index, size, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(index);
+        unbind();
+    }
+    
+    public VBO(String descriptor, int index, int size, int[] vertices) {
         create();
         bind();
         create_and_fill_buffer(vertices);
@@ -32,6 +42,14 @@ public class VBO {
     private void create_and_fill_buffer(float[] vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buf = stack.callocFloat(vertices.length);
+            buf.put(vertices).flip();
+            glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
+        }
+    }
+
+    private void create_and_fill_buffer(int[] vertices) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.callocInt(vertices.length);
             buf.put(vertices).flip();
             glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
         }

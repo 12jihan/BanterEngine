@@ -1,27 +1,23 @@
 package rendering;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_FILL;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
+import static org.lwjgl.opengl.GL14.glBlendEquation;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import java.util.List;
 
 import models.Mesh;
+import models.Texture;
 
 public class Scene {
     private boolean wired = false;
     Shader shader;
     Mesh mesh;
+    Texture texture;
+    int texture_uni_0;
 
     public Scene() {
         this.wired = false;
@@ -42,7 +38,7 @@ public class Scene {
                 0.5f, 0.0f, 0.0f,
                 0.0f, 0.5f, 0.0f,
                 0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.0f,
         };
 
         int[] indices = new int[] {
@@ -50,20 +46,33 @@ public class Scene {
                 1, 2, 3
         };
 
-        int[] texture_coords = new int[] {
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
+        float[] texture_coords = new float[] {
+                1.0f, 1.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 1.0f,
         };
 
         shader.init();
         mesh.init(positions, colors, texture_coords, indices);
+        // texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/checkermap.png",
+        //         shader.getShaderProgramId());
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/checkermap.png",
+        shader.getShaderProgramId());
+        texture.bind(0);
+        texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
+        if(texture_uni_0 == -1) {
+            System.err.println("Could not find uniform!");
+            System.exit(-1);
+        }
     };
 
     public void render() {
         glClearColor(0f, 0f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -71,9 +80,15 @@ public class Scene {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
         shader.use();
+        glActiveTexture(GL_TEXTURE0);
+        texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
+        // glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
+        // texture.bind();
+        glUniform1i(texture_uni_0, 0);
+
+
         glBindVertexArray(mesh.getVaoId());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
         // completely optional to unbind the vao:
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);

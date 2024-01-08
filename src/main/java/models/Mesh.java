@@ -17,7 +17,7 @@ public class Mesh {
     private int vao_id;
     private List<Integer> vboList = new ArrayList<>();
 
-    public void init(float[] positions, float[] colors, int[] texture_coords, int[] indices) {
+    public void init(float[] positions, float[] colors, float[] texture_coords, int[] indices) {
         vao_id = glGenVertexArrays();
         // vaoList.add(vao_id);
         System.out.println("VAO ID:\t" + vao_id);
@@ -33,7 +33,7 @@ public class Mesh {
             vboList.add(loc1.getVboId());
             
             // texture_coords (location = 2):
-            VBO loc2 = new VBO("texture_coords", 2, 2, colors);
+            VBO loc2 = new VBO("texture_coords", 2, 2, texture_coords);
             vboList.add(loc2.getVboId());
             
             // EBO for indices:

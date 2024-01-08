@@ -89,4 +89,8 @@ public class Shader {
         }
     }
 
+    public int getShaderProgramId() {
+        return shaderProgramId;
+    }
+
 }

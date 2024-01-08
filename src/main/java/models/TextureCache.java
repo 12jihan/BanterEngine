@@ -4,31 +4,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextureCache {
-    public static final String DEFAULT_TEXTURE = "/Users/jareemhoff/dev/java/sandbox/resources/textures/cube/cube.png";
+    // public static final String DEFAULT_TEXTURE = "/Users/jareemhoff/dev/java/sandbox/resources/textures/cube/cube.png";
 
-    private Map<String, Texture> textureMap;
+    // private Map<String, Texture> textureMap;
 
-    public TextureCache() {
-        textureMap = new HashMap<>();
-        textureMap.put(DEFAULT_TEXTURE, new Texture(DEFAULT_TEXTURE));
-    }
+    // public TextureCache() {
+    //     textureMap = new HashMap<>();
+    //     textureMap.put(DEFAULT_TEXTURE, new Texture(DEFAULT_TEXTURE));
+    // }
 
-    public void cleanup() {
-        textureMap.values().forEach(Texture::cleanup);
-    }
+    // public void cleanup() {
+    //     textureMap.values().forEach(Texture::cleanup);
+    // }
 
-    public Texture createTexture(String texturePath) {
-        return textureMap.computeIfAbsent(texturePath, Texture::new);
-    }
+    // public Texture createTexture(String texturePath) {
+    //     return textureMap.computeIfAbsent(texturePath, Texture::new);
+    // }
 
-    public Texture getTexture(String texturePath) {
-        Texture texture = null;
+    // public Texture getTexture(String texturePath) {
+    //     Texture texture = null;
 
-        if (texturePath != null)
-            texture = textureMap.get(texturePath);
-        if (texture == null)
-            texture = textureMap.get(DEFAULT_TEXTURE);
+    //     if (texturePath != null)
+    //         texture = textureMap.get(texturePath);
+    //     if (texture == null)
+    //         texture = textureMap.get(DEFAULT_TEXTURE);
 
-        return texture;
-    }
+    //     return texture;
+    // }
 }
