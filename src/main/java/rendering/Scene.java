@@ -28,17 +28,17 @@ public class Scene {
     public void init() {
         // Vertices for testing:
         float[] positions = new float[] {
-                0.5f, 0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                -0.5f, 0.5f, 0.0f
+                -0.5f,  0.5f, 0.0f,
+                 0.5f,  0.5f, 0.0f,
+                 0.5f, -0.5f, 0.0f,
+                -0.5f, -0.5f, 0.0f
         };
 
         float[] colors = new float[] {
                 0.5f, 0.0f, 0.0f,
                 0.0f, 0.5f, 0.0f,
                 0.0f, 0.0f, 0.5f,
-                0.5f, 0.5f, 0.0f,
+                0.0f, 0.5f, 0.5f,
         };
 
         int[] indices = new int[] {

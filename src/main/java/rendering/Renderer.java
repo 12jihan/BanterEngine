@@ -13,8 +13,9 @@ public class Renderer {
         glClearColor(0f, 0.2f, 0f, 0f);
     }
 
-    public void render(Model model) {
-        glBindVertexArray(model.getVaoID());
+    public void render(Scene scene) {
+        // TODO: Take a look at this:
+        // glBindVertexArray(model.getVaoID());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);
