@@ -5,7 +5,7 @@ vec2 out_texture_coords;
 
 // Uniforms:
 uniform sampler2D texture0;
-// uniform sampler2D texture2;
+// uniform sampler2D texture1;
 
 // Output:
 out vec4 fragColor;

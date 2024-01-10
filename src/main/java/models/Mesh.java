@@ -12,6 +12,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Mesh {
     // IDs and List for VAO and Buffers:
     private int vao_id;

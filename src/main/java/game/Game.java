@@ -11,6 +11,7 @@ import rendering.Renderer;
 import rendering.Scene;
 import rendering.Shader;
 
+// @SuppressWarnings("unused")
 public class Game {
     private DisplaySettings win_opts;
     private final WindowManager window;
@@ -36,8 +37,8 @@ public class Game {
                 });
         // Reimplement this later:
         // renderer = new Renderer();
-        shader = new Shader();
-        mesh = new Mesh();
+        // shader = new Shader();
+        // mesh = new Mesh();
         scene = new Scene();
         running = true;
     }
@@ -75,7 +76,8 @@ public class Game {
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         // renderer.cleanup();
-        shader.clean();
+        // shader.clean();
+        scene.cleanup();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }

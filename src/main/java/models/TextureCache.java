@@ -3,6 +3,7 @@ package models;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class TextureCache {
     // public static final String DEFAULT_TEXTURE = "/Users/jareemhoff/dev/java/sandbox/resources/textures/cube/cube.png";
 

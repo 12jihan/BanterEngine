@@ -19,6 +19,7 @@ import java.util.List;
 
 import utils.Utils;
 
+@SuppressWarnings("unused")
 public class Shader {
     private String vertSrc;
     private String fragSrc;

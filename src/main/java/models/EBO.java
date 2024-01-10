@@ -16,6 +16,7 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.system.MemoryStack;
 
+@SuppressWarnings("unused")
 public class EBO {
     private String descriptor;
     private int eboId;

@@ -11,7 +11,9 @@ import java.util.List;
 
 import models.Mesh;
 import models.Texture;
+import models.Texture2D;
 
+@SuppressWarnings("unused")
 public class Scene {
     private boolean wired = false;
     Shader shader;
@@ -28,10 +30,10 @@ public class Scene {
     public void init() {
         // Vertices for testing:
         float[] positions = new float[] {
-                -0.5f,  0.5f, 0.0f,
-                 0.5f,  0.5f, 0.0f,
-                 0.5f, -0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f
+                -0.5f,  -0.5f, 0.0f,
+                 0.5f,  -0.5f, 0.0f,
+                 0.5f,   0.5f, 0.0f,
+                -0.5f,   0.5f, 0.0f
         };
 
         float[] colors = new float[] {
@@ -47,32 +49,36 @@ public class Scene {
         };
 
         float[] texture_coords = new float[] {
-                1.0f, 1.0f,
-                1.0f, 0.0f,
                 0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
                 0.0f, 1.0f,
         };
 
         shader.init();
         mesh.init(positions, colors, texture_coords, indices);
-        // texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/checkermap.png",
-        //         shader.getShaderProgramId());
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/checkermap.png",
-        shader.getShaderProgramId());
-        texture.bind(0);
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/brickwall.png", shader.getShaderProgramId());
+        
+        // Uniform stuff
         texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
         if(texture_uni_0 == -1) {
             System.err.println("Could not find uniform!");
-            System.exit(-1);
+            // System.exit(-1);
+        } else {
+            System.out.println("Found uniform texture uni 0:\t" + texture_uni_0);
+        }
+        int texture_uni_other = glGetUniformLocation(shader.getShaderProgramId(), "wtf0");
+        if(texture_uni_other == -1) {
+            System.err.println("Could not find uniform: other!");
+            // System.exit(-1);
+        } else {
+            System.out.println("Found uniform texture uni other:\t" + texture_uni_other);
         }
     };
 
     public void render() {
-        glClearColor(0f, 0f, 0f, 0f);
+        glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -80,21 +86,16 @@ public class Scene {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
         shader.use();
-        glActiveTexture(GL_TEXTURE0);
-        texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
-        // glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
-        // texture.bind();
-        glUniform1i(texture_uni_0, 0);
-
-
+        texture.bind(0);
         glBindVertexArray(mesh.getVaoId());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         // completely optional to unbind the vao:
+        texture.unbind();
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);
     }
 
-    public void clean() {
+    public void cleanup() {
         shader.clean();
     }
 
