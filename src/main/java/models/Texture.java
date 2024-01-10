@@ -23,11 +23,6 @@ public class Texture {
     private String texturePath;
     private int shaderProgramId;
 
-    // public Texture(int width, int height, ByteBuffer buf) {
-    // this.texturePath = "";
-    // generateTexture(width, height, buf);
-    // }
-
     public Texture(String texture_path, int shaderProgramId) {
         this.texturePath = texture_path;
         this.shaderProgramId = shaderProgramId;
@@ -36,11 +31,12 @@ public class Texture {
 
     public void init(String texturePath) {
         this.texturePath = texturePath;
+        System.out.println("Texture path:\t" + texturePath);
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer channels = BufferUtils.createIntBuffer(1);
-
-        System.out.println("Texture path:\t" + texturePath);
+        // Flip the photo vertically because of the way stbi works:
+        stbi_set_flip_vertically_on_load(true);
         ByteBuffer image = stbi_load(texturePath, w, h, channels, 4);
         if (image == null) {
             throw new RuntimeException(

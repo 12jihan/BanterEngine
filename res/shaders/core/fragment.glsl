@@ -1,7 +1,7 @@
 #version 410 core
 
 in vec3 out_color;
-vec2 out_texture_coords;
+in vec2 out_texture_coords;
 
 // Uniforms:
 uniform sampler2D texture0;

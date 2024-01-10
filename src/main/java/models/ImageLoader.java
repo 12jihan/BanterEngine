@@ -91,11 +91,6 @@ public static int[] loadImage(String file) {
         if (!stbi_info_from_memory(imageBuffer, w, h, c)) {
             throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
         }
-  
-//        System.out.println("Image width: " + w.get(0));
-//        System.out.println("Image height: " + h.get(0));
-//        System.out.println("Image components: " + c.get(0));
-//        System.out.println("Image HDR: " + stbi_is_hdr_from_memory(imageBuffer));
 
         // Decode the image
         ByteBuffer image = stbi_load_from_memory(imageBuffer, w, h, c, 0);

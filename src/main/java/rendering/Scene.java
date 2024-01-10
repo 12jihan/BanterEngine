@@ -15,12 +15,12 @@ import models.Texture2D;
 
 @SuppressWarnings("unused")
 public class Scene {
+    private static Shader shader;
+    private static Mesh mesh;
+    private static Texture texture;
     private boolean wired = false;
-    Shader shader;
-    Mesh mesh;
-    Texture texture;
-    int texture_uni_0;
-    int sp_id;
+    private int shader_id;
+    private int texture_uni_0;
 
     public Scene() {
         this.wired = false;
@@ -56,21 +56,24 @@ public class Scene {
                 0.0f, 1.0f,
         };
 
+        // setting up shader:
         shader.init();
+        shader_id = shader.getShaderProgramId();
+
+        // setting up mesh info:
         mesh.init(positions, colors, texture_coords, indices);
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", shader.getShaderProgramId());
+
+        // setup texture:
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/checkermap.png", shader_id);
 
         // Activate the shader to set the uniform
         shader.use();
 
-        // Uniform stuff
         // uniform in texture:
-        texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
+        texture_uni_0 = glGetUniformLocation(shader_id, "texture0");
         if(texture_uni_0 == -1) {
             System.err.println("Could not find uniform!");
-            // System.exit(-1);
-        } else {
-            System.out.println("Found uniform texture uni 0:\t" + texture_uni_0);
+            System.exit(-1);
         }
 
     };
