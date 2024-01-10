@@ -58,7 +58,7 @@ public class Scene {
 
         shader.init();
         mesh.init(positions, colors, texture_coords, indices);
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/brickwall.png", shader.getShaderProgramId());
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", shader.getShaderProgramId());
 
         // Activate the shader to set the uniform
         shader.use();
@@ -73,20 +73,20 @@ public class Scene {
             System.out.println("Found uniform texture uni 0:\t" + texture_uni_0);
         }
 
-        // Set the texture uniform to use texture unit 0
-        glUniform1i(texture_uni_0, 0);
     };
-
+    
     public void render() {
         glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Use this to render in wireframe mode:
-        // if (wired) {
-        //     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        // } else {
-        //     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        // }
+        if (wired) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
         shader.use();
+        // Set the texture uniform to use texture unit 0
+        glUniform1i(texture_uni_0, 0);
         texture.bind(0);
 
         // Use the shader program

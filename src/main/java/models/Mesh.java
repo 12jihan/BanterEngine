@@ -20,7 +20,9 @@ public class Mesh {
 
     public void init(float[] positions, float[] colors, float[] texture_coords, int[] indices) {
         vao_id = glGenVertexArrays();
-        System.out.println("VAO ID:\t" + vao_id);
+        System.out.println("\n|----------------|");
+        System.out.println("| VAO ID:\t" + vao_id + "|");
+        System.out.println("|----------------|");
         glBindVertexArray(vao_id);
         // Create that VBO:
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -39,8 +41,11 @@ public class Mesh {
             // EBO for indices:
             EBO ebo = new EBO("indices", indices);
             vboList.add(ebo.getEboId());
+
         }
-        System.out.println("VBO List:\n\t" + vboList);
+        System.out.println("|----------------|\n");
+        glBindBuffer(GL_ARRAY_BUFFER , 0);
+        glBindVertexArray(0);
     }
 
     public void clean() {

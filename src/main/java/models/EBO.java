@@ -31,7 +31,7 @@ public class EBO {
 
     private void create() {
         eboId = glGenBuffers();
-        System.out.println("EBO ID:\t" + eboId);
+        System.out.println("| EBO ID:\t" + eboId + "|");
     }
     private void bind() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
@@ -44,7 +44,6 @@ public class EBO {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         }
     }
-
 
     // Unbind the EBO after use:
     public void unbind() {
@@ -62,5 +61,4 @@ public class EBO {
     public String getDescriptor() {
         return descriptor;
     }
-
 }

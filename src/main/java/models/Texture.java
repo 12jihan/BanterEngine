@@ -59,7 +59,7 @@ public class Texture {
         System.out.println("Texture ID:\t" + this.textureId);
         System.out.println("Texture size:\t" + width + " x " + height + " px\n" );
         glBindTexture(GL_TEXTURE_2D, this.textureId);
-        // glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -74,7 +74,6 @@ public class Texture {
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 image);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void bind(int slot) {

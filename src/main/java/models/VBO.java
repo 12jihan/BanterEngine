@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import org.lwjgl.system.MemoryStack;
 
@@ -33,7 +34,7 @@ public class VBO {
 
     private void create() {
         vboId = glGenBuffers();
-        System.out.println("VBO ID:\t" + vboId);
+        System.out.println("| VBO ID:\t" + vboId + "|");
     }
     private void bind() {
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -42,16 +43,18 @@ public class VBO {
     private void create_and_fill_buffer(float[] vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buf = stack.callocFloat(vertices.length);
-            buf.put(vertices).flip();
-            glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
+            buf.put(vertices);
+            buf.flip();
+            glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         }
     }
 
     private void create_and_fill_buffer(int[] vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buf = stack.callocInt(vertices.length);
-            buf.put(vertices).flip();
-            glBufferData(GL_ARRAY_BUFFER, buf, GL_DYNAMIC_DRAW);
+            buf.put(vertices);
+            buf.flip();
+            glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         }
     }
 

@@ -29,8 +29,8 @@ public class Shader {
     List<Integer> programList = new ArrayList<>();
 
     public void init() {
-        vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/res/shaders/core/vertex.glsl");
-        fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/src/res/shaders/core/fragment.glsl");
+        vertSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/res/shaders/core/vertex.glsl");
+        fragSrc = Utils.readFile("/Users/jareemhoff/dev/java/banter/res/shaders/core/fragment.glsl");
         create_shader(vertSrc, GL_VERTEX_SHADER);
         create_shader(fragSrc, GL_FRAGMENT_SHADER);
         create_program();

@@ -9,6 +9,7 @@ layout(location = 2) in vec2 mesh_texture_coords;
 uniform vec3 uniform_position;
 uniform vec3 wtf1;
 // uniform vec2 wtf2;
+
 // Outputs:
 out vec3 out_color;
 out vec2 out_texture_coords;
