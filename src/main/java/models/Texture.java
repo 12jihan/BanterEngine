@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL30.GL_RGBA32F;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
@@ -34,7 +35,6 @@ public class Texture {
     }
 
     public void init(String texturePath) {
-        // try (MemoryStack stack = MemoryStack.stackPush()) {
         this.texturePath = texturePath;
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
@@ -51,19 +51,17 @@ public class Texture {
         int height = h.get();
 
         generateTexture(width, height, image);
-
         stbi_image_free(image);
-
-        // }
     }
 
     private void generateTexture(int width, int height, ByteBuffer image) {
         this.textureId = glGenTextures();
         System.out.println("Texture ID:\t" + this.textureId);
+        System.out.println("Texture size:\t" + width + " x " + height + " px\n" );
         glBindTexture(GL_TEXTURE_2D, this.textureId);
         // glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(

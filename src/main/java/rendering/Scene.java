@@ -20,6 +20,7 @@ public class Scene {
     Mesh mesh;
     Texture texture;
     int texture_uni_0;
+    int sp_id;
 
     public Scene() {
         this.wired = false;
@@ -58,8 +59,12 @@ public class Scene {
         shader.init();
         mesh.init(positions, colors, texture_coords, indices);
         texture = new Texture("/Users/jareemhoff/dev/java/banter/src/res/textures/brickwall.png", shader.getShaderProgramId());
-        
+
+        // Activate the shader to set the uniform
+        shader.use();
+
         // Uniform stuff
+        // uniform in texture:
         texture_uni_0 = glGetUniformLocation(shader.getShaderProgramId(), "texture0");
         if(texture_uni_0 == -1) {
             System.err.println("Could not find uniform!");
@@ -67,13 +72,9 @@ public class Scene {
         } else {
             System.out.println("Found uniform texture uni 0:\t" + texture_uni_0);
         }
-        int texture_uni_other = glGetUniformLocation(shader.getShaderProgramId(), "wtf0");
-        if(texture_uni_other == -1) {
-            System.err.println("Could not find uniform: other!");
-            // System.exit(-1);
-        } else {
-            System.out.println("Found uniform texture uni other:\t" + texture_uni_other);
-        }
+
+        // Set the texture uniform to use texture unit 0
+        glUniform1i(texture_uni_0, 0);
     };
 
     public void render() {
@@ -87,6 +88,10 @@ public class Scene {
         }
         shader.use();
         texture.bind(0);
+
+        // Use the shader program
+        shader.use();
+
         glBindVertexArray(mesh.getVaoId());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         // completely optional to unbind the vao:

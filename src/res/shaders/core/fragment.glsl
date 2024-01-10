@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 in vec3 out_color;
 vec2 out_texture_coords;
