@@ -21,6 +21,8 @@ public class Game {
     private Scene scene;
     private Texture texture;
     private boolean running;
+    int width;
+    int height;
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
@@ -39,7 +41,7 @@ public class Game {
         // renderer = new Renderer();
         // shader = new Shader();
         // mesh = new Mesh();
-        scene = new Scene();
+        scene = new Scene(window);
         running = true;
     }
 
@@ -85,9 +87,9 @@ public class Game {
     }
 
     private void resize() {
-        int width = window.getWidth();
-        int height = window.getHeight();
-        System.out.println("Resizing to:\n\t- " + "x: " + width + ", y: " + height);
+        width = window.getWidth();
+        height = window.getHeight();
+        // System.out.println("Resizing to:\n\t- " + "x: " + width + ", y: " + height);
     }
 
     public void wired() {

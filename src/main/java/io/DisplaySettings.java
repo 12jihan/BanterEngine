@@ -10,8 +10,8 @@ public class DisplaySettings {
     public boolean vsync;
 
     public DisplaySettings() {
-        this.width = 800;
-        this.height = 800;
+        this.width = 1920;
+        this.height = 1080;
         this.fps = 60;
         this.target_ups = 60;
         this.compatibleProfile = true;

@@ -2,7 +2,6 @@ package game;
 
 import javax.annotation.processing.SupportedSourceVersion;
 
-import interfaces.GameLogic;
 import io.DisplaySettings;
 import io.WindowManager;
 

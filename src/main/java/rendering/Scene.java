@@ -15,6 +15,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
+import io.WindowManager;
 import models.mesh.Mesh;
 import models.texture.Texture;
 import utils.Projection;
@@ -26,6 +27,7 @@ public class Scene {
     private static Shader shader;
     private static Mesh mesh;
     private static Texture texture;
+    int width, height;
 
     // for testing purposes only:
     private static final float FOV = (float) Math.toRadians(60.0f);
@@ -33,26 +35,32 @@ public class Scene {
     private static final float Z_NEAR = 0.01f;
 
     private static Matrix4f projection;
-    private static Matrix4f model_matrix;
+    private static Matrix4f orthoMatrix;
     private static Vector3f position;
-    private static Quaternionf rotation;
+    private static float rotation = -45.0f;
+    private Matrix4f model_matrix;
+    private Matrix4f view_matrix;
+    private Matrix4f projection_matrix;
+    WindowManager window;
     private static float scale;
     // ------
 
     private boolean wired = false;
     private int shader_id;
     private int texture_uni_0;
-    private int projection_matrix;
 
-    public Scene() {
+    public Scene(WindowManager window) {
+        this.window = window;
+        this.width = window.getWidth();
+        this.height = window.getHeight();
         this.wired = false;
         shader = new Shader();
         mesh = new Mesh();
 
         // for testing purposes only:
-        model_matrix = new Matrix4f();
-        position = new Vector3f();
-        rotation = new Quaternionf();
+        // model_matrix = new Matrix4f();
+        // position = new Vector3f();
+        // rotation = new Quaternionf();
         scale = 1;
         // ------
     }
@@ -90,6 +98,17 @@ public class Scene {
         shader_id = shader.getShaderProgramId();
         uniformsMap = new UniformsMap(shader_id);
 
+        orthoMatrix = new Matrix4f().ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+
+        // create transformation:
+        model_matrix = new Matrix4f().identity();
+        view_matrix = new Matrix4f().identity();
+        projection_matrix = new Matrix4f().identity();
+
+        model_matrix.rotate((float) Math.toRadians(rotation), new Vector3f(1.0f, 0.0f, 0.0f));
+        view_matrix.translate(new Vector3f(0.0f, 0.0f, -3.0f));
+        projection_matrix.perspective((float) Math.toRadians(45.0f), window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+
         // setting up mesh info:
         mesh.init(positions, colors, texture_coords, indices);
         // setup texture:
@@ -100,38 +119,15 @@ public class Scene {
         // uniform in texture0:
         uniformsMap.createUniform("texture_sampler_0");
         // uniform in projection_matrix:
+        uniformsMap.createUniform("view_matrix");
+        uniformsMap.createUniform("model_matrix");
         uniformsMap.createUniform("projection_matrix");
-        // project_init(800, 800);
-        // // uniform in model_matrix:
-        // uniformsMap.createUniform("model_matrix");
-        // log_uniforms();
-        // position.x = 0;
-        // position.y = 0;
-        // position.z = -2;
-        // System.out.println( "position: " + position);
-        // Vector4f vec = new Vector4f(1.0f, 0.0f, 0.0f, 1.0f);
-        // Matrix4f trans = new Matrix4f().identity();
-        // System.out.println("trans before:\n" + trans);
-        // trans = trans.translate(new Vector3f(1.0f, 1.0f, 0.0f));
-        // System.out.println("trans:\n" + trans);
-        // vec = trans.transform(vec);
-        // Matrix4f scale = new Matrix4f();
-        // System.out.println("vec:\n" + vec);
-        // scale.scale(new Vector3f(0.5f, 0.5f, 0.5f));
-        // System.out.println("scale:\n" + scale);
-        // System.out.println("test1 translated: \n" + );
-        // float angleInRadians = (float)Math.PI / 2.0f;
-        // Quaternionf roatQuaternionf = new Quaternionf().rotateZ(angleInRadians);
-        // float angleInRadians2 = (float)Math.toRadians(90.0f);
-        // Quaternionf roatQuaternionf2 = new Quaternionf().rotateZ(90.0f);
-        // System.out.println("trans:\n" + roatQuaternionf);
-        // System.out.println("trans:\n" + roatQuaternionf2);
     };
-
+    
     public void render() {
         glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        position.z += -0.01;
+        System.out.println("width = " + window.getWidth() + " height = " + window.getHeight());
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -142,12 +138,14 @@ public class Scene {
         // Set the texture uniform to use texture unit 0
         // glUniform1i(texture_uni_0, 0);
         uniformsMap.setUniform("texture_sampler_0", 0);
+
         // Create transformations
-        Matrix4f transform = new Matrix4f().identity(); // Initialize matrix to identity matrix
-        transform.translate(0.5f, -0.5f, 0.0f); // Translate
-        float angle = (float) GLFW.glfwGetTime(); // Get the current time in seconds
-        transform.rotate(angle, new Vector3f(0.0f, 0.0f, 1.0f)); // Rotate around the Z-axis
-        uniformsMap.setUniform("projection_matrix", transform);
+        uniformsMap.setUniform("model_matrix", model_matrix);
+        uniformsMap.setUniform("view_matrix", view_matrix);
+        uniformsMap.setUniform("projection_matrix", projection_matrix);
+        model_matrix.rotate((float) Math.toRadians(0.05), new Vector3f(0.0f, 0.0f, 1.0f));
+        
+        
         texture.bind(0);
 
         // Use the shader program
@@ -194,6 +192,6 @@ public class Scene {
     }
 
     public void updateProjMatrix(int width, int height) {
-        projection.setPerspective(FOV, (float) width / height, Z_NEAR, Z_FAR);
+        projection.setPerspective(FOV, (float) window.getWidth() / window.getHeight(), Z_NEAR, Z_FAR);
     }
 }
