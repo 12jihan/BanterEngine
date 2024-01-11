@@ -13,6 +13,7 @@ public class Projection {
     public Projection(int width, int height) {
         projMatrix = new Matrix4f();
         updateProjMatrix(width, height);
+        System.out.println("proj matrix: " + projMatrix);
     }
 
     public Matrix4f getProjMatrix() {

@@ -1,4 +1,4 @@
-package display;
+package io;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -79,7 +79,10 @@ public class WindowManager {
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window!");
         // Set the resize callback:
-        glfwSetFramebufferSizeCallback(window, (window, w, h) -> resized(w, h));
+        glfwSetFramebufferSizeCallback(window, (window, w, h) -> {
+            resized(w, h);
+            glViewport(0, 0, width, height);
+        });
         // Set the error callback:
         glfwSetErrorCallback((int errorCode, long msgPtr) -> Logger.error("Error code [{}], msg [{}]", errorCode,
                 MemoryUtil.memUTF8(msgPtr)));

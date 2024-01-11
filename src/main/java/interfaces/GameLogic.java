@@ -1,6 +1,6 @@
 package interfaces;
 
-import display.WindowManager;
+import io.WindowManager;
 
 public interface GameLogic {
     // void init(Window window, Scene scene, Render render) throws Exception;

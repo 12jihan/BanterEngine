@@ -1,4 +1,4 @@
-package display;
+package io;
 
 public class DisplaySettings {
     private static final boolean SYSCHECK = System.getProperty("os.name").contains("Mac");

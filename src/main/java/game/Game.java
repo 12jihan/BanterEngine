@@ -2,8 +2,8 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import display.DisplaySettings;
-import display.WindowManager;
+import io.DisplaySettings;
+import io.WindowManager;
 import models.entity.Model;
 import models.mesh.Mesh;
 import models.texture.Texture;
@@ -61,6 +61,7 @@ public class Game {
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
         while (!window.windowShouldClose()) {
             update(); // Update game logic
+            glViewport(0, 0, window.getWidth(), window.getHeight());
             render(); // Render graphics
             
         }

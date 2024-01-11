@@ -74,4 +74,8 @@ public class UniformsMap {
             glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
         }
     }
+
+    public Map<String, Integer> getAllUniforms() { 
+        return uniforms;
+    }
 }
