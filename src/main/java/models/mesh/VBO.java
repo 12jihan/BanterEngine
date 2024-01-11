@@ -1,12 +1,14 @@
-package models;
+package models.mesh;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import org.lwjgl.system.MemoryStack;
 
@@ -15,6 +17,7 @@ public class VBO {
     private int vboId;
 
     public VBO(String descriptor, int index, int size, float[] vertices) {
+        this.descriptor = descriptor.substring(0, 3);
         create();
         bind();
         create_and_fill_buffer(vertices);
@@ -24,6 +27,7 @@ public class VBO {
     }
     
     public VBO(String descriptor, int index, int size, int[] vertices) {
+        this.descriptor = descriptor;
         create();
         bind();
         create_and_fill_buffer(vertices);
@@ -34,7 +38,7 @@ public class VBO {
 
     private void create() {
         vboId = glGenBuffers();
-        System.out.println("| VBO ID:\t" + vboId + "|");
+        System.out.println("| VBO " + descriptor + ":\t" + vboId + "|");
     }
     private void bind() {
         glBindBuffer(GL_ARRAY_BUFFER, vboId);

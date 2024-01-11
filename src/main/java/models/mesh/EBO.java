@@ -1,4 +1,4 @@
-package models;
+package models.mesh;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -22,6 +22,7 @@ public class EBO {
     private int eboId;
 
     public EBO(String descriptor, int[] indices) {
+        this.descriptor = descriptor.substring(0, 3);
         create();
         bind();
         create_and_fill_buffer(indices);
@@ -31,7 +32,7 @@ public class EBO {
 
     private void create() {
         eboId = glGenBuffers();
-        System.out.println("| EBO ID:\t" + eboId + "|");
+        System.out.println("| EBO " + this.descriptor + ":\t" + eboId + "|");
     }
     private void bind() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);

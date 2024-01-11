@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import models.Model;
+import models.entity.Model;
 
 @SuppressWarnings("unused")
 public class Renderer {

@@ -1,4 +1,4 @@
-package models;
+package models.texture;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -4,9 +4,9 @@ import static org.lwjgl.opengl.GL11.*;
 
 import display.DisplaySettings;
 import display.WindowManager;
-import models.Mesh;
-import models.Model;
-import models.Texture;
+import models.entity.Model;
+import models.mesh.Mesh;
+import models.texture.Texture;
 import rendering.Renderer;
 import rendering.Scene;
 import rendering.Shader;
@@ -62,6 +62,7 @@ public class Game {
         while (!window.windowShouldClose()) {
             update(); // Update game logic
             render(); // Render graphics
+            
         }
     }
 

@@ -1,13 +1,15 @@
-package models;
+package models.entity;
+
+import models.mesh.Mesh;
 
 public class Model {
 
     private int vaoID;
     private int vertexCount;
 
-    public Model(int vaoID, int vertexCount) {
-        this.vaoID = vaoID;
-        this.vertexCount = vertexCount;
+    public Model(Mesh mesh) {
+        this.vaoID = mesh.getVaoId();
+        this.vertexCount = 0;
         System.out.println("Model created:\t" + vaoID + "\t" + vertexCount);
     }
 

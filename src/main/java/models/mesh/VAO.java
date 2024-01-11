@@ -1,4 +1,4 @@
-package models;
+package models.mesh;
 
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 

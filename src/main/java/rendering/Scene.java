@@ -9,9 +9,8 @@ import static org.lwjgl.opengl.GL30.*;
 
 import java.util.List;
 
-import models.Mesh;
-import models.Texture;
-import models.Texture2D;
+import models.mesh.Mesh;
+import models.texture.Texture;
 
 @SuppressWarnings("unused")
 public class Scene {
@@ -31,10 +30,22 @@ public class Scene {
     public void init() {
         // Vertices for testing:
         float[] positions = new float[] {
-                -0.5f,  -0.5f, 0.0f,
-                 0.5f,  -0.5f, 0.0f,
-                 0.5f,   0.5f, 0.0f,
-                -0.5f,   0.5f, 0.0f
+                // VO
+                -0.5f, 0.5f, 0.5f,
+                // V1
+                -0.5f, -0.5f, 0.5f,
+                // V2
+                0.5f, -0.5f, 0.5f,
+                // V3
+                0.5f, 0.5f, 0.5f,
+                // V4
+                -0.5f, 0.5f, -0.5f,
+                // V5
+                0.5f, 0.5f, -0.5f,
+                // V6
+                -0.5f, -0.5f, -0.5f,
+                // V7
+                0.5f, -0.5f, -0.5f,
         };
 
         float[] colors = new float[] {
@@ -42,11 +53,25 @@ public class Scene {
                 0.0f, 0.5f, 0.0f,
                 0.0f, 0.0f, 0.5f,
                 0.0f, 0.5f, 0.5f,
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
         };
 
         int[] indices = new int[] {
-                0, 1, 3,
-                1, 2, 3
+                // Front face
+                0, 1, 3, 3, 1, 2,
+                // Top Face
+                4, 0, 3, 5, 4, 3,
+                // Right face
+                3, 2, 7, 5, 3, 7,
+                // Left face
+                6, 1, 0, 6, 0, 4,
+                // Bottom face
+                2, 1, 6, 2, 6, 7,
+                // Back face
+                7, 6, 4, 7, 4, 5,
         };
 
         float[] texture_coords = new float[] {
@@ -71,13 +96,13 @@ public class Scene {
 
         // uniform in texture:
         texture_uni_0 = glGetUniformLocation(shader_id, "texture0");
-        if(texture_uni_0 == -1) {
+        if (texture_uni_0 == -1) {
             System.err.println("Could not find uniform!");
             System.exit(-1);
         }
 
     };
-    
+
     public void render() {
         glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

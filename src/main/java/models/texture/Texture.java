@@ -1,4 +1,4 @@
-package models;
+package models.texture;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -70,6 +70,7 @@ public class Texture {
                 GL_RGBA,
                 GL_UNSIGNED_BYTE,
                 image);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     public void bind(int slot) {
