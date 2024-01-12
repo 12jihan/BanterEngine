@@ -34,7 +34,7 @@ public class Scene {
     private static final float Z_FAR = 1000.0f;
     private static final float Z_NEAR = 0.01f;
 
-    private static Matrix4f projection;
+    private static Projection projection_class;
     private static Matrix4f orthoMatrix;
     private static Vector3f position;
     private static float rotation = -45.0f;
@@ -56,6 +56,7 @@ public class Scene {
         this.wired = false;
         shader = new Shader();
         mesh = new Mesh();
+        projection_class = new Projection(width, height);
 
         // for testing purposes only:
         // model_matrix = new Matrix4f();
@@ -127,7 +128,6 @@ public class Scene {
     public void render() {
         glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        System.out.println("width = " + window.getWidth() + " height = " + window.getHeight());
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -142,7 +142,8 @@ public class Scene {
         // Create transformations
         uniformsMap.setUniform("model_matrix", model_matrix);
         uniformsMap.setUniform("view_matrix", view_matrix);
-        uniformsMap.setUniform("projection_matrix", projection_matrix);
+        uniformsMap.setUniform("projection_matrix", projection_class.getProjMatrix());
+        projection_class.updateProjMatrix(window.getWidth(), window.getHeight());
         model_matrix.rotate((float) Math.toRadians(0.05), new Vector3f(0.0f, 0.0f, 1.0f));
         
         
@@ -179,19 +180,5 @@ public class Scene {
 
     public void wired() {
         wired = !wired;
-    }
-
-    public void project_init(int width, int height) {
-        projection = new Matrix4f();
-        updateProjMatrix(width, height);
-        System.out.println("proj matrix: " + projection);
-    }
-
-    public Matrix4f getProjMatrix() {
-        return projection;
-    }
-
-    public void updateProjMatrix(int width, int height) {
-        projection.setPerspective(FOV, (float) window.getWidth() / window.getHeight(), Z_NEAR, Z_FAR);
     }
 }
