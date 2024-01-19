@@ -3,21 +3,32 @@ package models.entity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
+import org.joml.Vector4f;
+@SuppressWarnings("unused")
 public class Entity {
+    // identification for entity id and model id
+    private final String id;
+    private final String model_id;
+    // model positioning
+    private Matrix4f model_matrix;
+    // positioning in the world
     private Vector3f position;
     private Quaternionf rotation;
-    private Vector3f scale;
+    private float scale;
 
-    public Entity() {
-        position = new Vector3f(0.0f, 0.0f, 0.0f);
+    public Entity(String id, String model_id) {
+        // set the id of the entity
+        this.id = id;
+        this.model_id = model_id;
+        // set transformation of the entity
+        position = new Vector3f();
         rotation = new Quaternionf();
-        scale = new Vector3f(1.0f, 1.0f, 1.0f);
+        scale = 1;
     }
 
     // Update the entity's state (e.g., apply physics, handle user input)
-    public void update() {
-        // Implement logic to update the entity's state
+    public void updateModelMatrix() {
+        model_matrix.translationRotateScale(this.position, this.rotation, this.scale);
     }
 
     // Get the transformation matrix of this entity
@@ -27,28 +38,39 @@ public class Entity {
                 .scale(scale);
     }
 
-    // Getters and setters for position, rotation, scale
+    // Getters and setters
+    public String getId() {
+        return id;
+    }
+
+    public String getModelId() {
+        return model_id;
+    }
+
     public Vector3f getPosition() {
         return position;
     }
 
-    public void setPosition(Vector3f position) {
-        this.position = position;
+    public void setPosition(float x, float y, float z) {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+        System.out.println("Position set: " + this.position);
     }
 
     public Quaternionf getRotation() {
         return rotation;
     }
 
-    public void setRotation(Quaternionf rotation) {
-        this.rotation = rotation;
+    public void setRotation(float x, float y, float z, float angle) {
+        this.rotation.fromAxisAngleRad(x, y, z, angle);;
     }
 
-    public Vector3f getScale() {
+    public float getScale() {
         return scale;
     }
 
-    public void setScale(Vector3f scale) {
+    public void setScale(float scale) {
         this.scale = scale;
     }
 }

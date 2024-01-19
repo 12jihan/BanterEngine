@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 public class Utils {

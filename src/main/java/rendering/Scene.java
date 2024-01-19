@@ -7,7 +7,12 @@ import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.logging.Logger;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -15,7 +20,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
-import io.WindowManager;
+import io.Window;
 import models.mesh.Mesh;
 import models.texture.Texture;
 import utils.Projection;
@@ -25,23 +30,37 @@ import utils.UniformsMap;
 public class Scene {
     private UniformsMap uniformsMap;
     private static Shader shader;
-    private static Mesh mesh;
+    private static Mesh mesh1;
+    private static Mesh mesh2;
     private static Texture texture;
     int width, height;
+    int[] indices;
 
     // for testing purposes only:
     private static final float FOV = (float) Math.toRadians(60.0f);
     private static final float Z_FAR = 1000.0f;
     private static final float Z_NEAR = 0.01f;
 
+    private static Camera camera;
     private static Projection projection_class;
     private static Matrix4f orthoMatrix;
     private static Vector3f position;
     private static float rotation = -45.0f;
+
+    // mesh 1
     private Matrix4f model_matrix;
     private Matrix4f view_matrix;
     private Matrix4f projection_matrix;
-    WindowManager window;
+    // mesh 2
+    private Matrix4f model_matrix2;
+    private Matrix4f view_matrix2;
+    private Matrix4f projection_matrix2;
+
+    // Model map:
+    List<Mesh> meshes = new ArrayList<>();
+    List<Matrix4f> models = new ArrayList<>();
+
+    Window window;
     private static float scale;
     // ------
 
@@ -49,13 +68,15 @@ public class Scene {
     private int shader_id;
     private int texture_uni_0;
 
-    public Scene(WindowManager window) {
+    public Scene(Window window) {
         this.window = window;
         this.width = window.getWidth();
         this.height = window.getHeight();
-        this.wired = false;
+        this.wired = false; 
+        camera = new Camera();
         shader = new Shader();
-        mesh = new Mesh();
+        mesh1 = new Mesh();
+        mesh2 = new Mesh();
         projection_class = new Projection(width, height);
 
         // for testing purposes only:
@@ -69,10 +90,54 @@ public class Scene {
     public void init() {
         // Vertices for testing:
         float[] positions = new float[] {
-                0.5f, 0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                -0.5f, 0.5f, 0.0f,
+                // V0
+                -0.5f, 0.5f, 0.5f,
+                // V1
+                -0.5f, -0.5f, 0.5f,
+                // V2
+                0.5f, -0.5f, 0.5f,
+                // V3
+                0.5f, 0.5f, 0.5f,
+                // V4
+                -0.5f, 0.5f, -0.5f,
+                // V5
+                0.5f, 0.5f, -0.5f,
+                // V6
+                -0.5f, -0.5f, -0.5f,
+                // V7
+                0.5f, -0.5f, -0.5f,
+
+                // For text coords in top face
+                // V8: V4 repeated
+                -0.5f, 0.5f, -0.5f,
+                // V9: V5 repeated
+                0.5f, 0.5f, -0.5f,
+                // V10: V0 repeated
+                -0.5f, 0.5f, 0.5f,
+                // V11: V3 repeated
+                0.5f, 0.5f, 0.5f,
+
+                // For text coords in right face
+                // V12: V3 repeated
+                0.5f, 0.5f, 0.5f,
+                // V13: V2 repeated
+                0.5f, -0.5f, 0.5f,
+
+                // For text coords in left face
+                // V14: V0 repeated
+                -0.5f, 0.5f, 0.5f,
+                // V15: V1 repeated
+                -0.5f, -0.5f, 0.5f,
+
+                // For text coords in bottom face
+                // V16: V6 repeated
+                -0.5f, -0.5f, -0.5f,
+                // V17: V7 repeated
+                0.5f, -0.5f, -0.5f,
+                // V18: V1 repeated
+                -0.5f, -0.5f, 0.5f,
+                // V19: V2 repeated
+                0.5f, -0.5f, 0.5f,
         };
 
         float[] colors = new float[] {
@@ -80,42 +145,100 @@ public class Scene {
                 0.0f, 0.5f, 0.0f,
                 0.0f, 0.0f, 0.5f,
                 0.0f, 0.5f, 0.5f,
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
         };
 
-        int[] indices = new int[] {
-                0, 1, 3, // first triangle
-                1, 2, 3 // second triangle
+        indices = new int[] {
+                // Front face
+                0, 1, 3, 3, 1, 2,
+                // Top Face
+                8, 10, 11, 9, 8, 11,
+                // Right face
+                12, 13, 7, 5, 12, 7,
+                // Left face
+                6, 14, 4, 6, 15, 14,
+                // Bottom face
+                19, 16, 17, 19, 18, 16,
+                // Back face
+                7, 4, 5, 7, 6, 4
         };
 
         float[] texture_coords = new float[] {
-                1.0f, 1.0f,
-                1.0f, 0.0f,
                 0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+
+                0.0f, 0.0f,
+                0.5f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+
+                // For text coords in top face
+                0.0f, 0.5f,
+                0.5f, 0.5f,
                 0.0f, 1.0f,
+                0.5f, 1.0f,
+
+                // For text coords in right face
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+
+                // For text coords in left face
+                0.5f, 0.0f,
+                0.5f, 0.5f,
+
+                // For text coords in bottom face
+                0.5f, 0.0f,
+                1.0f, 0.0f,
+                0.5f, 0.5f,
+                1.0f, 0.5f,
         };
 
         // setting up shader:
         shader.init();
         shader_id = shader.getShaderProgramId();
         uniformsMap = new UniformsMap(shader_id);
-
-        orthoMatrix = new Matrix4f().ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+        Random r = new Random();
+        float random = 3.0f + r.nextFloat() * (3.0f - (-3.0f)) + (-3.0f);
+        System.out.println("x: " + random);
+        float random2 = 3.0f + r.nextFloat() * (3.0f - (-3.0f)) + (-3.0f);
+        System.out.println("x2: " + random2);
 
         // create transformation:
         model_matrix = new Matrix4f().identity();
-        view_matrix = new Matrix4f().identity();
+        model_matrix2 = new Matrix4f().identity();
+        // view_matrix = new Matrix4f().identity();
+        // Camera:
+        view_matrix = camera.getViewMatrix();
         projection_matrix = new Matrix4f().identity();
 
-        model_matrix.rotate((float) Math.toRadians(rotation), new Vector3f(1.0f, 0.0f, 0.0f));
-        view_matrix.translate(new Vector3f(0.0f, 0.0f, -3.0f));
-        projection_matrix.perspective((float) Math.toRadians(45.0f), window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+        // mesh 1
+        model_matrix.rotate((float) Math.toRadians(rotation), new Vector3f(0.0f, 1.0f, 0.0f));
+        model_matrix.translate(new Vector3f(1.5f, 0.0f, 0.0f));
+        models.add(model_matrix);
+        // mesh 2
+        model_matrix2.rotate((float) Math.toRadians(rotation), new Vector3f(0.0f, 0.0f, 1.0f));
+        model_matrix2.translate(new Vector3f(-1.5f, 0.0f, 0.0f));
+        models.add(model_matrix2);
+
+        view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));
+        view_matrix.rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
 
         // setting up mesh info:
-        mesh.init(positions, colors, texture_coords, indices);
+        mesh1.init(positions, colors, texture_coords, indices);
+        meshes.add(mesh1);
+        mesh2.init(positions, colors, texture_coords, indices);
+        meshes.add(mesh2);
+        System.out.println("Meshes: " + meshes.size());
+        // mesh.init(positions, colors, indices);
         // setup texture:
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/checkermap.png", shader_id);
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", shader_id);
         // Activate the shader to set the uniform
-        shader.use();
+        // shader.use();
 
         // uniform in texture0:
         uniformsMap.createUniform("texture_sampler_0");
@@ -124,7 +247,7 @@ public class Scene {
         uniformsMap.createUniform("model_matrix");
         uniformsMap.createUniform("projection_matrix");
     };
-    
+
     public void render() {
         glClearColor(0.2f, 0.25f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -135,25 +258,26 @@ public class Scene {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
         shader.use();
-        // Set the texture uniform to use texture unit 0
-        // glUniform1i(texture_uni_0, 0);
-        uniformsMap.setUniform("texture_sampler_0", 0);
-
-        // Create transformations
-        uniformsMap.setUniform("model_matrix", model_matrix);
-        uniformsMap.setUniform("view_matrix", view_matrix);
         uniformsMap.setUniform("projection_matrix", projection_class.getProjMatrix());
-        projection_class.updateProjMatrix(window.getWidth(), window.getHeight());
-        model_matrix.rotate((float) Math.toRadians(0.05), new Vector3f(0.0f, 0.0f, 1.0f));
-        
+        uniformsMap.setUniform("view_matrix", view_matrix);
+        uniformsMap.setUniform("texture_sampler_0", 0);
+        // update matirces:
         
         texture.bind(0);
+        for(int i = 0; i < meshes.size(); i++) {
+            projection_class.updateProjMatrix(window.getWidth(), window.getHeight());
+            uniformsMap.setUniform("model_matrix" , models.get(i));
+            models.get(i).rotate((float) Math.toRadians(50), new Vector3f(0.0f, 0.0f, 1.0f));
+            glBindVertexArray(meshes.get(i).getVaoId());
+            glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+        }
+        
+
+        // bind textures slot:
 
         // Use the shader program
-        shader.use();
+        // shader.use();
 
-        glBindVertexArray(mesh.getVaoId());
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         // completely optional to unbind the vao:
         texture.unbind();
         glBindVertexArray(0);
@@ -165,6 +289,8 @@ public class Scene {
 
     public void cleanup() {
         shader.clean();
+        mesh1.clean();
+        mesh2.clean();
     }
 
     private void log_uniforms() {

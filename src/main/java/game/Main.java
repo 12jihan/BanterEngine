@@ -3,7 +3,7 @@ package game;
 import javax.annotation.processing.SupportedSourceVersion;
 
 import io.DisplaySettings;
-import io.WindowManager;
+import io.Window;
 
 /**
  * Hello world!

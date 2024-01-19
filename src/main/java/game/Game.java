@@ -2,31 +2,41 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.util.Timer;
+
 import io.DisplaySettings;
-import io.WindowManager;
+import io.Window;
+import models.entity.AssimpModelLoader;
 import models.entity.Model;
 import models.mesh.Mesh;
 import models.texture.Texture;
 import rendering.Renderer;
 import rendering.Scene;
 import rendering.Shader;
+import utils.GameClock;
+import utils.TimeManager;
 
-// @SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class Game {
+    public static final int TARGET_FPS = 60;
+    public static final int TARGET_UPS = 30;
+
+    private AssimpModelLoader model_loader;
     private DisplaySettings win_opts;
-    private final WindowManager window;
-    private Shader shader;
-    private Model model;
-    private Mesh mesh;
+    private Window window;
     private Scene scene;
-    private Texture texture;
-    private boolean running;
-    int width;
-    int height;
+    private GameClock clock;
+
+    private int targetFps;
+    private int targetUps;
+
+    private int width;
+    private int height;
+    private boolean running = false;
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
-        window = new WindowManager("Banter Engine", win_opts,
+        window = new Window("Banter Engine", win_opts,
                 // Auto resizes:
                 () -> {
                     resize();
@@ -37,11 +47,14 @@ public class Game {
                     wired();
                     return null;
                 });
-        // Reimplement this later:
-        // renderer = new Renderer();
-        // shader = new Shader();
-        // mesh = new Mesh();
+        targetFps = 60;
+        targetUps = 30;
         scene = new Scene(window);
+        clock = new GameClock(TARGET_FPS, TARGET_UPS);
+
+        // model_loader = new AssimpModelLoader();
+        // model_loader.load_model("test-1",
+        // "/Users/jareemhoff/dev/java/banter/res/models/sample_model.dae");
         running = true;
     }
 
@@ -60,21 +73,48 @@ public class Game {
     }
 
     private void loop() {
+        long initialTime = System.currentTimeMillis();
+        float timeU = 1000.0f / targetUps;
+        float timeR = targetFps > 0 ? 1000.0f / targetFps : 0;
+        float deltaUpdate = 0;
+        float deltaFps = 0;
+
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
-        while (!window.windowShouldClose()) {
-            update(); // Update game logic
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-            render(); // Render graphics
+        // clock.update();
+        while (!window.windowShouldClose() && running) {
+            long now = System.currentTimeMillis();
+            deltaUpdate += (now - initialTime) / timeU;
+            deltaFps += (now - initialTime) / timeR;
             
+            if (targetFps <= 0 || deltaFps >= 1) {
+                input();
+            }
+
+            if (deltaUpdate >= 1) {
+                update();
+            }
+
+            if (targetFps <= 0 || deltaFps >= 1) {
+                render();
+            }
+            initialTime = now;
+            input();
+            update();
+            render();
         }
     }
 
-    private void render() {
-        scene.render();
+    private void input() {
+
     }
 
     private void update() {
         window.update();
+    }
+
+    private void render() {
+        scene.render();
     }
 
     private void cleanup() {

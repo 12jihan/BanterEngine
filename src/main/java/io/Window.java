@@ -16,7 +16,7 @@ import org.pmw.tinylog.Logger;
 
 // import input.InputHandler;
 
-public class WindowManager {
+public class Window {
     // check if system type is mac osx/m1 for compatibility:
     private long window;
     private int height, width;
@@ -27,7 +27,7 @@ public class WindowManager {
     private Callable<Void> resizeFunc;
     private Callable<Void> keyInputFunc;
 
-    public WindowManager(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
+    public Window(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
             Callable<Void> keyInputFunc) {
         this.title = title;
         this.height = win_opts.height;
@@ -52,7 +52,7 @@ public class WindowManager {
         }
         // Check if the version of OpenGL is 3.2 or greater:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
         // Used for mac compatibility layer - check if mac or something else:
         // if (win_opts.compatibleProfile) <-- used to be this line:
@@ -99,6 +99,7 @@ public class WindowManager {
             glfwSwapInterval(1);
         }
         glfwShowWindow(window);
+        // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         createCapabilities();
         // For resizing:
         IntBuffer bufferWidth = BufferUtils.createIntBuffer(1);

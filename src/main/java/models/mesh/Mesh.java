@@ -20,6 +20,7 @@ public class Mesh {
     private List<Integer> vboList = new ArrayList<>();
 
     public void init(float[] positions, float[] colors, float[] texture_coords, int[] indices) {
+    // public void init(float[] positions, float[] colors, int[] indices) {
         vao_id = glGenVertexArrays();
         vertexCount = positions.length / 3;
         System.out.println("\n|----------------|");

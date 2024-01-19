@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.lwjgl.system.MemoryStack;
 
+@SuppressWarnings("unused")
 public class VBO {
     private String descriptor;
     private int vboId;

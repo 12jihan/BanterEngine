@@ -2,6 +2,7 @@ package utils;
 
 import org.joml.Matrix4f;
 
+@SuppressWarnings("unused")
 public class Projection {
 
     private static final float FOV = (float) Math.toRadians(90.0f);
@@ -11,7 +12,7 @@ public class Projection {
     private int height;
 
     private Matrix4f projMatrix;
-
+    
     public Projection(int width, int height) {
         projMatrix = new Matrix4f();
         updateProjMatrix(width, height);
@@ -25,10 +26,5 @@ public class Projection {
 
     public void updateProjMatrix(int width, int height) {
         projMatrix.setPerspective(FOV, (float) width / height, Z_NEAR, Z_FAR);
-        System.out.println("width: " + width + " " + "height: " + height);
-    }
-
-    public String getView() {
-        return "width: " + this.width + " " + "height: " + this.height;
     }
 }
