@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Timer;
 
+import org.lwjgl.glfw.GLFW;
+
 import io.DisplaySettings;
 import io.Window;
 import models.entity.AssimpModelLoader;
@@ -73,32 +75,40 @@ public class Game {
     }
 
     private void loop() {
-        long initialTime = System.currentTimeMillis();
-        float timeU = 1000.0f / targetUps;
-        float timeR = targetFps > 0 ? 1000.0f / targetFps : 0;
-        float deltaUpdate = 0;
-        float deltaFps = 0;
+        double prevTime = 0;
+        double curTime = 0;
+        double timeDiff;
+        int counter = 0;
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
-        // clock.update();
         while (!window.windowShouldClose() && running) {
-            long now = System.currentTimeMillis();
-            deltaUpdate += (now - initialTime) / timeU;
-            deltaFps += (now - initialTime) / timeR;
+
+            curTime = GLFW.glfwGetTime();
+            timeDiff = curTime - prevTime;
+            // System.out.println("diff time: " + timeDiff);
+            counter++;
+
+            if(timeDiff >= 1.0  / 60.0) {
+                System.out.println("fps: " + (1.0 / timeDiff) * counter + "\tms: " + (timeDiff / counter) * 1000);
+                // System.out.println();
+                prevTime = curTime;
+			    counter = 0;
+            }
+
             
-            if (targetFps <= 0 || deltaFps >= 1) {
-                input();
-            }
+            // if (targetFps <= 0 || deltaFps >= 1) {
+            //     input();
+            // }
 
-            if (deltaUpdate >= 1) {
-                update();
-            }
+            // if (deltaUpdate >= 1) {
+            //     update();
+            // }
 
-            if (targetFps <= 0 || deltaFps >= 1) {
-                render();
-            }
-            initialTime = now;
+            // if (targetFps <= 0 || deltaFps >= 1) {
+            //     render();
+            // }
+
             input();
             update();
             render();
