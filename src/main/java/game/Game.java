@@ -77,7 +77,7 @@ public class Game {
     private void loop() {
         double prevTime = 0;
         double curTime = 0;
-        double timeDiff;
+        double deltaTime;
         int counter = 0;
 
         glEnable(GL_DEPTH_TEST);
@@ -85,16 +85,19 @@ public class Game {
         while (!window.windowShouldClose() && running) {
 
             curTime = GLFW.glfwGetTime();
-            timeDiff = curTime - prevTime;
-            // System.out.println("diff time: " + timeDiff);
+            deltaTime = curTime - prevTime;
             counter++;
 
-            if(timeDiff >= 1.0  / 60.0) {
-                System.out.println("fps: " + (1.0 / timeDiff) * counter + "\tms: " + (timeDiff / counter) * 1000);
-                // System.out.println();
+            if(deltaTime >= 1.0  / 30.0) {
+                String FPS = "fps: " + (1.0 / deltaTime) * counter;
+                String ms = "ms: " + (deltaTime / counter) * 1000;
+                System.out.println(FPS + "\t" + ms);
                 prevTime = curTime;
 			    counter = 0;
             }
+            render();
+            input();
+            update();
 
             
             // if (targetFps <= 0 || deltaFps >= 1) {
@@ -109,9 +112,6 @@ public class Game {
             //     render();
             // }
 
-            input();
-            update();
-            render();
         }
     }
 
