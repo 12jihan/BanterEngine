@@ -80,8 +80,9 @@ public class Game {
         float timeR = targetFps > 0 ? 1000.0f / targetFps : 0;
         float deltaUpdate = 0;
         float deltaFps = 0;
-
-        long updateTime = initialTime;
+        int frameCount = 0;
+        long lastFpsTime = initialTime;
+        long fpsUpdateTime = 100; // Update FPS every 100 milliseconds
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
@@ -91,22 +92,25 @@ public class Game {
             deltaFps += (now - initialTime) / timeR;
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                // Nothing here yet:
                 input();
-            }
-            if (deltaUpdate >= 1.0f) {
-                update();
-                long diffTimeMillis = now - updateTime;
-                updateTime = now;
-                deltaUpdate--;
-            }
-            if (targetFps <= 0 || deltaFps >= 1) {
-                // updates:
+                if (deltaUpdate >= 1.0f) {
+                    update();
+                    deltaUpdate--;
+                }
                 render();
+                frameCount++;
                 deltaFps--;
             }
-            initialTime = now;
 
+            // Calculate and print FPS every 100 milliseconds
+            if (now - lastFpsTime >= fpsUpdateTime) {
+                double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
+                System.out.println("FPS: " + fps);
+                frameCount = 0;
+                lastFpsTime = now;
+            }
+
+            initialTime = now;
         }
     }
 
