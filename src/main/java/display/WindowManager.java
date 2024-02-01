@@ -198,7 +198,7 @@ public class WindowManager {
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
-        if (key == GLFW_KEY_HOME && action == GLFW_RELEASE) {
+        if (key == GLFW_KEY_0 && action == GLFW_RELEASE) {
             try {
                 // Attempt to call the key callback:
                 keyInputFunc.call();
