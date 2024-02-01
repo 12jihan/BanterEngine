@@ -75,42 +75,37 @@ public class Game {
     }
 
     private void loop() {
-        double prevTime = 0;
-        double curTime = 0;
-        double deltaTime;
-        int counter = 0;
+        long initialTime = System.currentTimeMillis();
+        float timeU = 1000.0f / targetUps;
+        float timeR = targetFps > 0 ? 1000.0f / targetFps : 0;
+        float deltaUpdate = 0;
+        float deltaFps = 0;
+
+        long updateTime = initialTime;
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
         while (!window.windowShouldClose() && running) {
+            long now = System.currentTimeMillis();
+            deltaUpdate += (now - initialTime) / timeU;
+            deltaFps += (now - initialTime) / timeR;
 
-            curTime = GLFW.glfwGetTime();
-            deltaTime = curTime - prevTime;
-            counter++;
-
-            if(deltaTime >= 1.0  / 30.0) {
-                String FPS = "fps: " + (1.0 / deltaTime) * counter;
-                String ms = "ms: " + (deltaTime / counter) * 1000;
-                System.out.println(FPS + "\t" + ms);
-                prevTime = curTime;
-			    counter = 0;
+            if (targetFps <= 0 || deltaFps >= 1) {
+                // Nothing here yet:
+                input();
             }
-            render();
-            input();
-            update();
-
-            
-            // if (targetFps <= 0 || deltaFps >= 1) {
-            //     input();
-            // }
-
-            // if (deltaUpdate >= 1) {
-            //     update();
-            // }
-
-            // if (targetFps <= 0 || deltaFps >= 1) {
-            //     render();
-            // }
+            if (deltaUpdate >= 1.0f) {
+                update();
+                long diffTimeMillis = now - updateTime;
+                updateTime = now;
+                deltaUpdate--;
+            }
+            if (targetFps <= 0 || deltaFps >= 1) {
+                // updates:
+                render();
+                deltaFps--;
+            }
+            initialTime = now;
 
         }
     }

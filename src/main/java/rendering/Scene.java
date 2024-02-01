@@ -267,7 +267,7 @@ public class Scene {
         for(int i = 0; i < meshes.size(); i++) {
             projection_class.updateProjMatrix(window.getWidth(), window.getHeight());
             uniformsMap.setUniform("model_matrix" , models.get(i));
-            models.get(i).rotate((float) Math.toRadians(50), new Vector3f(0.0f, 0.0f, 1.0f));
+            models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f, 1.0f));
             glBindVertexArray(meshes.get(i).getVaoId());
             glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         }
