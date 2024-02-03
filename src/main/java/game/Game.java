@@ -9,7 +9,8 @@ import org.lwjgl.glfw.GLFW;
 import io.DisplaySettings;
 import io.Window;
 import models.entity.AssimpModelLoader;
-import models.entity.Model;
+import models.entity.Entity;
+import models.entity.RawModel;
 import models.mesh.Mesh;
 import models.texture.Texture;
 import rendering.Renderer;
@@ -27,7 +28,8 @@ public class Game {
     private DisplaySettings win_opts;
     private Window window;
     private Scene scene;
-    private GameClock clock;
+    private Entity entity;
+    private RawModel model;
 
     private int targetFps;
     private int targetUps;
@@ -52,7 +54,6 @@ public class Game {
         targetFps = 60;
         targetUps = 30;
         scene = new Scene(window);
-        clock = new GameClock(TARGET_FPS, TARGET_UPS);
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -69,9 +70,67 @@ public class Game {
     }
 
     private void init() throws Exception {
+        // Coordinates for stuff:
+        float[] colors = new float[] {
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
+        };
+
+        int[] indices = new int[] {
+                // Front face
+                0, 1, 3, 3, 1, 2,
+                // Top Face
+                8, 10, 11, 9, 8, 11,
+                // Right face
+                12, 13, 7, 5, 12, 7,
+                // Left face
+                6, 14, 4, 6, 15, 14,
+                // Bottom face
+                19, 16, 17, 19, 18, 16,
+                // Back face
+                7, 4, 5, 7, 6, 4
+        };
+
+        float[] texture_coords = new float[] {
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+
+                0.0f, 0.0f,
+                0.5f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+
+                // For text coords in top face
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.0f, 1.0f,
+                0.5f, 1.0f,
+
+                // For text coords in right face
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+
+                // For text coords in left face
+                0.5f, 0.0f,
+                0.5f, 0.5f,
+
+                // For text coords in bottom face
+                0.5f, 0.0f,
+                1.0f, 0.0f,
+                0.5f, 0.5f,
+                1.0f, 0.5f,
+        };
+
         window.init();
         scene.init();
-
     }
 
     private void loop() {
@@ -82,7 +141,7 @@ public class Game {
         float deltaFps = 0;
         int frameCount = 0;
         long lastFpsTime = initialTime;
-        long fpsUpdateTime = 100; // Update FPS every 100 milliseconds
+        long fpsUpdateTime = 50; // Update FPS every 100 milliseconds
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
@@ -105,7 +164,7 @@ public class Game {
             // Calculate and print FPS every 100 milliseconds
             if (now - lastFpsTime >= fpsUpdateTime) {
                 double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
-                System.out.println("FPS: " + fps);
+                // System.out.println("FPS: " + fps);
                 frameCount = 0;
                 lastFpsTime = now;
             }
@@ -114,18 +173,15 @@ public class Game {
         }
     }
 
-    private void input() {
-
-    }
-
+    
     private void update() {
         window.update();
     }
-
+    
     private void render() {
         scene.render();
     }
-
+    
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         // renderer.cleanup();
@@ -133,6 +189,10 @@ public class Game {
         scene.cleanup();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
+    }
+    
+    private void input() {
+
     }
 
     private void resize() {

@@ -1,14 +1,17 @@
 package models.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+
 @SuppressWarnings("unused")
 public class Entity {
     // identification for entity id and model id
     private final String id;
-    private final String model_id;
     // model positioning
     private Matrix4f model_matrix;
     // positioning in the world
@@ -16,10 +19,11 @@ public class Entity {
     private Quaternionf rotation;
     private float scale;
 
-    public Entity(String id, String model_id) {
+    List<Entity> entities = new ArrayList<Entity>();
+
+    public Entity(String id) {
         // set the id of the entity
         this.id = id;
-        this.model_id = model_id;
         // set transformation of the entity
         position = new Vector3f();
         rotation = new Quaternionf();

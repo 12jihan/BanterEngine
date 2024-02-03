@@ -2,12 +2,12 @@ package models.entity;
 
 import models.mesh.Mesh;
 
-public class Model {
+public class RawModel {
 
     private int vaoID;
     private int vertexCount;
 
-    public Model(Mesh mesh) {
+    public RawModel(Mesh mesh) {
         this.vaoID = mesh.getVaoId();
         this.vertexCount = 0;
         System.out.println("Model created:\t" + vaoID + "\t" + vertexCount);
