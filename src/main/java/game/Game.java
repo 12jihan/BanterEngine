@@ -71,6 +71,57 @@ public class Game {
 
     private void init() throws Exception {
         // Coordinates for stuff:
+        float[] positions = new float[] {
+                // V0
+                -0.5f, 0.5f, 0.5f,
+                // V1
+                -0.5f, -0.5f, 0.5f,
+                // V2
+                0.5f, -0.5f, 0.5f,
+                // V3
+                0.5f, 0.5f, 0.5f,
+                // V4
+                -0.5f, 0.5f, -0.5f,
+                // V5
+                0.5f, 0.5f, -0.5f,
+                // V6
+                -0.5f, -0.5f, -0.5f,
+                // V7
+                0.5f, -0.5f, -0.5f,
+
+                // For text coords in top face
+                // V8: V4 repeated
+                -0.5f, 0.5f, -0.5f,
+                // V9: V5 repeated
+                0.5f, 0.5f, -0.5f,
+                // V10: V0 repeated
+                -0.5f, 0.5f, 0.5f,
+                // V11: V3 repeated
+                0.5f, 0.5f, 0.5f,
+
+                // For text coords in right face
+                // V12: V3 repeated
+                0.5f, 0.5f, 0.5f,
+                // V13: V2 repeated
+                0.5f, -0.5f, 0.5f,
+
+                // For text coords in left face
+                // V14: V0 repeated
+                -0.5f, 0.5f, 0.5f,
+                // V15: V1 repeated
+                -0.5f, -0.5f, 0.5f,
+
+                // For text coords in bottom face
+                // V16: V6 repeated
+                -0.5f, -0.5f, -0.5f,
+                // V17: V7 repeated
+                0.5f, -0.5f, -0.5f,
+                // V18: V1 repeated
+                -0.5f, -0.5f, 0.5f,
+                // V19: V2 repeated
+                0.5f, -0.5f, 0.5f,
+        };
+
         float[] colors = new float[] {
                 0.5f, 0.0f, 0.0f,
                 0.0f, 0.5f, 0.0f,
@@ -173,15 +224,14 @@ public class Game {
         }
     }
 
-    
     private void update() {
         window.update();
     }
-    
+
     private void render() {
         scene.render();
     }
-    
+
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         // renderer.cleanup();
@@ -190,7 +240,7 @@ public class Game {
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
-    
+
     private void input() {
 
     }

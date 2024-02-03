@@ -43,10 +43,7 @@ public class Scene {
     private static final float Z_NEAR = 0.01f;
 
     private static Camera camera;
-    private static Projection projection_class;
-    private static Matrix4f orthoMatrix;
-    private static Vector3f position;
-    private static float rotation = -45.0f;
+    private static Projection projection;
 
     private Matrix4f model_matrix;
     private Matrix4f view_matrix;
@@ -77,90 +74,19 @@ public class Scene {
     }
 
     public void init() {
-        // Vertices for testing:
-        float[] positions = new float[] {
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
-
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
-
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
-
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,
-        };
-
-        
         // setting up shader:
         shader.init();
         shader_id = shader.getShaderProgramId();
         uniformsMap = new UniformsMap(shader_id);
 
-        // create transformation:
-        model_matrix = new Matrix4f().identity();
-        model_matrix2 = new Matrix4f().identity();
-        // view_matrix = new Matrix4f().identity();
-        // Camera:
+        // Camera and projection of camera:
         view_matrix = camera.getViewMatrix();
         projection_matrix = new Matrix4f().identity();
 
-        // mesh 1
-        model_matrix.rotate((float) Math.toRadians(rotation), new Vector3f(0.0f, 1.0f, 0.0f));
-        model_matrix.translate(new Vector3f(1.5f, 0.0f, 0.0f));
-        models.add(model_matrix);
-        // mesh 2
-        model_matrix2.rotate((float) Math.toRadians(rotation), new Vector3f(0.0f, 0.0f, 1.0f));
-        model_matrix2.translate(new Vector3f(-1.5f, 0.0f, 0.0f));
-        models.add(model_matrix2);
-
+        // TODO: Camera control needs to be moved into an actual input handler device.
         view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));
         view_matrix.rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
 
-        // setting up mesh info:
-        mesh1.init(positions, colors, texture_coords, indices);
-        meshes.add(mesh1);
-        mesh2.init(positions, colors, texture_coords, indices);
-        meshes.add(mesh2);
-        System.out.println("Meshes: " + meshes.size());
         // mesh.init(positions, colors, indices);
         // setup texture:
         texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", shader_id);
@@ -230,5 +156,13 @@ public class Scene {
     public void wired() {
         wired = !wired;
         System.out.println("key");
+    }
+
+    /**
+     * @param entity - add and entity to the scene
+     **/
+    public void add_entity(Entity entity) {
+        entities.add(entity);
+        System.out.println("Entity added: " + entity.getId());
     }
 }
