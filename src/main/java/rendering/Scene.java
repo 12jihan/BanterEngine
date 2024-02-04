@@ -50,7 +50,7 @@ public class Scene {
     private Matrix4f projection_matrix;
 
     // Model map:
-    List<Entity> entities = new ArrayList<>();
+    List<Entity> entities = new ArrayList<Entity>();
 
     Window window;
     private static float scale;
@@ -64,11 +64,11 @@ public class Scene {
         this.window = window;
         this.width = window.getWidth();
         this.height = window.getHeight();
-        this.wired = false; 
-        
+        this.wired = false;
+
         camera = new Camera();
-        projection_class = new Projection(width, height);
-        
+        projection = new Projection(width, height);
+
         shader = new Shader();
         scale = 1;
     }
@@ -109,22 +109,30 @@ public class Scene {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        };
+        }
+        ;
 
         // Shader Uniforms:
         shader.use();
-        uniformsMap.setUniform("projection_matrix", projection_class.getProjMatrix());
+        uniformsMap.setUniform("projection_matrix", projection.getProjMatrix());
         uniformsMap.setUniform("view_matrix", view_matrix);
         uniformsMap.setUniform("texture_sampler_0", 0);
         texture.bind(0);
-        // for(int i = 0; i < meshes.size(); i++) {
-        //     projection_class.updateProjMatrix(window.getWidth(), window.getHeight());
-        //     uniformsMap.setUniform("model_matrix" , models.get(i));
-        //     models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f, 1.0f));
+
+        for( Entity entity : entities) {
+            RawModel model = entity.getModel();
+            projection.updateProjMatrix(window.getWidth(), window.getHeight());
+            
+            uniformsMap.setUniform("model_matrix", model.);
+        }
+        // for (int i = 0; i < entities.size(); i++) {
+        //     projection.updateProjMatrix(window.getWidth(), window.getHeight());
+        //     uniformsMap.setUniform("model_matrix", models.get(i));
+        //     models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f,
+        //             1.0f));
         //     glBindVertexArray(meshes.get(i).getVaoId());
         //     glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         // }
-        
 
         // bind textures slot:
 

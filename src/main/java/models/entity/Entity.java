@@ -11,7 +11,7 @@ import org.joml.Vector4f;
 @SuppressWarnings("unused")
 public class Entity {
     // identification for entity id and model id
-    private final String id;
+    private final String entity_id;
     // model positioning
     private Matrix4f model_matrix;
     // positioning in the world
@@ -19,11 +19,11 @@ public class Entity {
     private Quaternionf rotation;
     private float scale;
 
-    List<Entity> entities = new ArrayList<Entity>();
+    RawModel model;
 
     public Entity(String id) {
         // set the id of the entity
-        this.id = id;
+        entity_id = id;
         // set transformation of the entity
         position = new Vector3f();
         rotation = new Quaternionf();
@@ -44,11 +44,7 @@ public class Entity {
 
     // Getters and setters
     public String getId() {
-        return id;
-    }
-
-    public String getModelId() {
-        return model_id;
+        return entity_id;
     }
 
     public Vector3f getPosition() {
@@ -67,7 +63,7 @@ public class Entity {
     }
 
     public void setRotation(float x, float y, float z, float angle) {
-        this.rotation.fromAxisAngleRad(x, y, z, angle);;
+        this.rotation.fromAxisAngleRad(x, y, z, angle);
     }
 
     public float getScale() {
@@ -76,5 +72,9 @@ public class Entity {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public RawModel getModel() {
+        return model;
     }
 }
