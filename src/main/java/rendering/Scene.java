@@ -74,6 +74,7 @@ public class Scene {
     }
 
     public void init() {
+        System.out.println("entities list: " + entities.size());
         // setting up shader:
         shader.init();
         shader_id = shader.getShaderProgramId();
@@ -120,10 +121,17 @@ public class Scene {
         texture.bind(0);
 
         for( Entity entity : entities) {
+            // Setting default values:
             RawModel model = entity.getModel();
+            Matrix4f model_matrix = entity.getTransformationMatrix();
+
+            // matrices and uniforms:
             projection.updateProjMatrix(window.getWidth(), window.getHeight());
-            
-            uniformsMap.setUniform("model_matrix", model.);
+            uniformsMap.setUniform("model_matrix", model_matrix);
+
+            // Do the binding and stuff:
+            glBindVertexArray(model.getVaoID());
+            glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);
         }
         // for (int i = 0; i < entities.size(); i++) {
         //     projection.updateProjMatrix(window.getWidth(), window.getHeight());
@@ -147,7 +155,6 @@ public class Scene {
 
     public void cleanup() {
         shader.clean();
-        mesh1.clean();
     }
 
     private void log_uniforms() {

@@ -74,6 +74,10 @@ public class Entity {
         this.scale = scale;
     }
 
+    public void addModel(RawModel model) {
+        this.model = model;
+    }
+
     public RawModel getModel() {
         return model;
     }

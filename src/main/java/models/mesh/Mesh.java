@@ -66,6 +66,10 @@ public class Mesh {
         return vao_id;
     }
 
+    public int getVertexCount() {
+        return vertexCount;
+    };
+
     public List<Integer> getVboList() {
         return vboList;
     }

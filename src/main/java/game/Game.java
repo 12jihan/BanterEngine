@@ -181,6 +181,13 @@ public class Game {
         };
 
         window.init();
+
+        Mesh mesh = new Mesh();
+        mesh.init(positions, colors, texture_coords, indices);
+        RawModel model = new RawModel(mesh);
+        Entity entity = new Entity("test");
+        entity.addModel(model);
+        scene.add_entity(entity);
         scene.init();
     }
 
