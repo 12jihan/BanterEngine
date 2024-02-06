@@ -27,6 +27,7 @@ public class Entity {
         // set transformation of the entity
         position = new Vector3f();
         rotation = new Quaternionf();
+        model_matrix = new Matrix4f();
         scale = 1;
     }
 
@@ -37,9 +38,7 @@ public class Entity {
 
     // Get the transformation matrix of this entity
     public Matrix4f getTransformationMatrix() {
-        return new Matrix4f().translate(position)
-                .rotate(rotation)
-                .scale(scale);
+        return new Matrix4f().translationRotateScale(position, rotation, scale);
     }
 
     // Getters and setters

@@ -30,6 +30,7 @@ public class Game {
     private Scene scene;
     private Entity entity;
     private RawModel model;
+    private Renderer renderer;
 
     private int targetFps;
     private int targetUps;
@@ -54,6 +55,7 @@ public class Game {
         targetFps = 60;
         targetUps = 30;
         scene = new Scene(window);
+        renderer = new Renderer(scene);
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -188,7 +190,7 @@ public class Game {
         Entity entity = new Entity("test");
         entity.addModel(model);
         scene.add_entity(entity);
-        scene.init();
+        renderer.init();
     }
 
     private void loop() {
@@ -236,14 +238,15 @@ public class Game {
     }
 
     private void render() {
-        scene.render();
+        // scene.render();
+        renderer.render();
     }
 
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
-        // renderer.cleanup();
+        renderer.cleanup();
         // shader.clean();
-        scene.cleanup();
+        // scene.cleanup();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
@@ -255,7 +258,6 @@ public class Game {
     private void resize() {
         width = window.getWidth();
         height = window.getHeight();
-        // System.out.println("Resizing to:\n\t- " + "x: " + width + ", y: " + height);
     }
 
     public void wired() {

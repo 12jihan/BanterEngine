@@ -103,15 +103,7 @@ public class Scene {
     };
 
     public void render() {
-        glClearColor(0.2f, 0.25f, 0f, 0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // Use this to render in wireframe mode:
-        if (wired) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-        ;
+        
 
         // Shader Uniforms:
         shader.use();
@@ -120,27 +112,25 @@ public class Scene {
         uniformsMap.setUniform("texture_sampler_0", 0);
         texture.bind(0);
 
-        for( Entity entity : entities) {
+        for (Entity entity : entities) {
             // Setting default values:
-            RawModel model = entity.getModel();
-            Matrix4f model_matrix = entity.getTransformationMatrix();
 
             // matrices and uniforms:
             projection.updateProjMatrix(window.getWidth(), window.getHeight());
-            uniformsMap.setUniform("model_matrix", model_matrix);
+            uniformsMap.setUniform("model_matrix", entity.getTransformationMatrix());
 
             // Do the binding and stuff:
-            glBindVertexArray(model.getVaoID());
-            glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(entity.getModel().getVaoID());
+            glDrawElements(GL_TRIANGLES, entity.getModel().getVertexCount(), GL_UNSIGNED_INT, 0);
+            
+            // for (int i = 0; i < entities.size(); i++) {
+            // projection.updateProjMatrix(window.getWidth(), window.getHeight());TWCsucks
+            // uniformsMap.setUniform("model_matrix", models.get(i));
+            // models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f,
+            // 1.0f));
+            // glBindVertexArray(meshes.get(i).getVaoId());
+            // glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         }
-        // for (int i = 0; i < entities.size(); i++) {
-        //     projection.updateProjMatrix(window.getWidth(), window.getHeight());
-        //     uniformsMap.setUniform("model_matrix", models.get(i));
-        //     models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f,
-        //             1.0f));
-        //     glBindVertexArray(meshes.get(i).getVaoId());
-        //     glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-        // }
 
         // bind textures slot:
 
@@ -170,7 +160,6 @@ public class Scene {
 
     public void wired() {
         wired = !wired;
-        System.out.println("key");
     }
 
     /**
