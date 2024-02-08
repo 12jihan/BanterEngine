@@ -28,8 +28,9 @@ public class Game {
     private DisplaySettings win_opts;
     private Window window;
     private Scene scene;
-    private Entity test;
+    private Entity test0;
     private Entity test1;
+    private Entity test2;
     private RawModel model;
     private Renderer renderer;
 
@@ -190,19 +191,25 @@ public class Game {
         mesh.init(positions, colors, texture_coords, indices);
         RawModel model = new RawModel(mesh);
         // Create new entity, then add the model to the entity:
-        test = new Entity("test");
-        test.addModel(model);
-        test.setPosition(0.0f, 0.0f, 3.0f);
-        test.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
+        test0 = new Entity("test0");
+        test0.addModel(model);
+        test0.setPosition(0.0f, 0.0f, 3.0f);
+        test0.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
         
-        test1 = new Entity("test_1");
+        test1 = new Entity("test1");
         test1.addModel(model);
         test1.setPosition(2.0f, 0f, 2.0f);
-        test1.setRotation(1.0f, 0.0f, 0.0f, -65.0f);
+        test1.setRotation(1.0f, 0.0f, 0.3f, -65.0f);
+        
+        test2 = new Entity("test2");
+        test2.addModel(model);
+        test2.setPosition(-2.0f, 0f, 2.0f);
+        test2.setRotation(0.5f, 1.0f, 0.0f, 65.0f);
 
         // add entity to the scene
-        scene.add_entity(test);
+        scene.add_entity(test0);
         scene.add_entity(test1);
+        scene.add_entity(test2);
         // initialize the renderer:
         renderer.init();
     }
