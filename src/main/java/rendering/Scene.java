@@ -123,14 +123,6 @@ public class Scene {
             // Do the binding and stuff:
             glBindVertexArray(entity.getModel().getVaoID());
             glDrawElements(GL_TRIANGLES, entity.getModel().getIndexCount(), GL_UNSIGNED_INT, 0);
-            
-            // for (int i = 0; i < entities.size(); i++) {
-            // projection.updateProjMatrix(window.getWidth(), window.getHeight());TWCsucks
-            // uniformsMap.setUniform("model_matrix", models.get(i));
-            // models.get(i).rotate((float) Math.toRadians(1), new Vector3f(0.0f, 0.0f,
-            // 1.0f));
-            // glBindVertexArray(meshes.get(i).getVaoId());
-            // glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         }
 
         // bind textures slot:
