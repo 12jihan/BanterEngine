@@ -100,6 +100,7 @@ public class Scene {
         uniformsMap.createUniform("view_matrix");
         uniformsMap.createUniform("model_matrix");
         uniformsMap.createUniform("projection_matrix");
+        // glEnable(GL_Cul)
     };
 
     public void render() {

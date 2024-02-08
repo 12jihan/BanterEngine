@@ -23,11 +23,11 @@ public class Mesh {
     // public void init(float[] positions, float[] colors, int[] indices) {
         vao_id = glGenVertexArrays();
         vertexCount = positions.length / 3;
-        System.out.println("\n|----------------|");
-        System.out.println("| VAO Created:\t" + vao_id + "|");
-        System.out.println("|----------------|");
+        System.out.println("\n|-----------------|");
+        System.out.println("| VAO Created:\t" + vao_id + " |");
+        System.out.println("|-----------------|");
         System.out.println("| Vertex Count:\t" + vertexCount + "|");
-        System.out.println("|----------------|");
+        System.out.println("|-----------------|");
         glBindVertexArray(vao_id);
         // Create that VBO:
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -52,7 +52,7 @@ public class Mesh {
             vboList.add(ebo.getEboId());
 
         }
-        System.out.println("|----------------|\n");
+        System.out.println("|-----------------|\n");
         glBindBuffer(GL_ARRAY_BUFFER , 0);
         glBindVertexArray(0);
     }

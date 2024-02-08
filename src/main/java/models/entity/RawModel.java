@@ -10,7 +10,6 @@ public class RawModel {
     public RawModel(Mesh mesh) {
         this.vaoID = mesh.getVaoId();
         this.vertexCount = mesh.getVertexCount();
-        System.out.println("Model created:\t" + vaoID + "\t" + vertexCount);
     }
 
     /**

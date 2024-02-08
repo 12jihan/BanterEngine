@@ -28,7 +28,8 @@ public class Game {
     private DisplaySettings win_opts;
     private Window window;
     private Scene scene;
-    private Entity entity;
+    private Entity test;
+    private Entity test1;
     private RawModel model;
     private Renderer renderer;
 
@@ -184,12 +185,28 @@ public class Game {
 
         window.init();
 
+        // create the needed mesh and add it to the mix
         Mesh mesh = new Mesh();
+        // initialize the coords of the mesh:
         mesh.init(positions, colors, texture_coords, indices);
+        // Add mesh to the model -- this is a RawModel b/c you have to add the coords
+        // yourself:
         RawModel model = new RawModel(mesh);
-        Entity entity = new Entity("test");
-        entity.addModel(model);
-        scene.add_entity(entity);
+        // Create new entity, then add the model to the entity:
+        test = new Entity("test");
+        test.addModel(model);
+        test.setPosition(0.0f, 0.0f, 3.0f);
+        test.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
+        
+        test1 = new Entity("test_1");
+        test1.addModel(model);
+        test1.setPosition(2.0f, 0f, 2.0f);
+        test1.setRotation(1.0f, 0.0f, 0.0f, -65.0f);
+
+        // add entity to the scene
+        scene.add_entity(test);
+        scene.add_entity(test1);
+        // initialize the renderer:
         renderer.init();
     }
 
@@ -204,7 +221,8 @@ public class Game {
         long fpsUpdateTime = 50; // Update FPS every 100 milliseconds
 
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
         while (!window.windowShouldClose() && running) {
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
@@ -235,18 +253,18 @@ public class Game {
 
     private void update() {
         window.update();
+        // test.getTransformationMatrix().
+        
+        
     }
 
     private void render() {
-        // scene.render();
         renderer.render();
     }
 
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         renderer.cleanup();
-        // shader.clean();
-        // scene.cleanup();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
