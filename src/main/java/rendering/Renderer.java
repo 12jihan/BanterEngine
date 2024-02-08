@@ -10,6 +10,8 @@ import models.entity.RawModel;
 public class Renderer {
 
     private Scene scene;
+    private boolean wired = false;
+    
 
     public Renderer(Scene scene) {
         this.scene = scene;
@@ -22,13 +24,13 @@ public class Renderer {
     public void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0f, 0f);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // Use this to render in wireframe mode:
-        // if (wired) {
-        // } else {
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        // }
-        // ;
+        if (wired) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+        ;
 
         scene.render();
         // Maybe this should be use instead but i'm not sure yet

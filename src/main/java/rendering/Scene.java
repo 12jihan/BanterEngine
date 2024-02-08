@@ -38,7 +38,7 @@ public class Scene {
     int[] indices;
 
     // for testing purposes only:
-    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float FOV = (float) Math.toRadians(180.0f);
     private static final float Z_FAR = 1000.0f;
     private static final float Z_NEAR = 0.01f;
 
@@ -122,7 +122,7 @@ public class Scene {
 
             // Do the binding and stuff:
             glBindVertexArray(entity.getModel().getVaoID());
-            glDrawElements(GL_TRIANGLES, entity.getModel().getVertexCount(), GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, entity.getModel().getIndexCount(), GL_UNSIGNED_INT, 0);
             
             // for (int i = 0; i < entities.size(); i++) {
             // projection.updateProjMatrix(window.getWidth(), window.getHeight());TWCsucks

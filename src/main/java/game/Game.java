@@ -187,10 +187,7 @@ public class Game {
 
         // create the needed mesh and add it to the mix
         Mesh mesh = new Mesh();
-        // initialize the coords of the mesh:
         mesh.init(positions, colors, texture_coords, indices);
-        // Add mesh to the model -- this is a RawModel b/c you have to add the coords
-        // yourself:
         RawModel model = new RawModel(mesh);
         // Create new entity, then add the model to the entity:
         test = new Entity("test");
