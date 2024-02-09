@@ -11,7 +11,6 @@ public class Renderer {
 
     private Scene scene;
     private boolean wired = false;
-    
 
     public Renderer(Scene scene) {
         this.scene = scene;
@@ -22,20 +21,23 @@ public class Renderer {
     }
 
     public void render() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0f, 0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Use this to render in wireframe mode:
         if (wired) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-        ;
 
         scene.render();
-        // Maybe this should be use instead but i'm not sure yet
-        // glBindVertexArray(0);
-        // glDisableVertexAttribArray(0);
+        // Maybe this should be use instead but i'm not sure yet:
+        glBindVertexArray(0);
+        glDisableVertexAttribArray(0);
+    }
+
+    public void wired() {
+        wired = !wired;
     }
 
     public void cleanup() {

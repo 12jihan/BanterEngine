@@ -130,7 +130,7 @@ public class Window {
      * Getter and Setters:
      **/
 
-    // Getter and Setter for created window::
+    // Getter and Setter for created window:
     public long getWindow() {
         return window;
     }
@@ -202,11 +202,10 @@ public class Window {
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
-        if (key == GLFW_KEY_HOME && action == GLFW_RELEASE) {
+        if (key == GLFW_KEY_COMMA && action == GLFW_RELEASE) {
             try {
                 // Attempt to call the key callback:
                 keyInputFunc.call();
-                System.out.println(key);
             } catch (Exception e) {
                 Logger.error("Error with keycall back:\n\t -", e);
             }

@@ -56,7 +56,6 @@ public class Scene {
     private static float scale;
     // ------
 
-    private boolean wired;
     private int shader_id;
     private int texture_uni_0;
 
@@ -64,7 +63,6 @@ public class Scene {
         this.window = window;
         this.width = window.getWidth();
         this.height = window.getHeight();
-        this.wired = false;
 
         camera = new Camera();
         projection = new Projection(width, height);
@@ -104,7 +102,6 @@ public class Scene {
     };
 
     public void render() {
-        
 
         // Shader Uniforms:
         shader.use();
@@ -132,8 +129,8 @@ public class Scene {
 
         // completely optional to unbind the vao:
         texture.unbind();
-        glBindVertexArray(0);
-        glDisableVertexAttribArray(0);
+        // glBindVertexArray(0);
+        // glDisableVertexAttribArray(0);
     }
 
     public void cleanup() {
@@ -151,15 +148,18 @@ public class Scene {
         });
     }
 
-    public void wired() {
-        wired = !wired;
-    }
-
     /**
      * @param entity - add and entity to the scene
      **/
     public void add_entity(Entity entity) {
         entities.add(entity);
         System.out.println("Entity added: " + entity.getId());
+    }
+
+    /**
+     * @return Camera from the scene.
+     **/
+    public Camera get_camera() {
+        return camera;
     }
 }

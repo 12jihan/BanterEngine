@@ -1,9 +1,11 @@
 package game;
 
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Timer;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import io.DisplaySettings;
@@ -13,6 +15,7 @@ import models.entity.Entity;
 import models.entity.RawModel;
 import models.mesh.Mesh;
 import models.texture.Texture;
+import rendering.Camera;
 import rendering.Renderer;
 import rendering.Scene;
 import rendering.Shader;
@@ -22,7 +25,9 @@ import utils.TimeManager;
 @SuppressWarnings("unused")
 public class Game {
     public static final int TARGET_FPS = 60;
-    public static final int TARGET_UPS = 30;
+    public static final int TARGET_UPS = 60;
+    private static final float MOUSE_SENSITIVITY = 0.1f;
+    private static final float MOVEMENT_SPEED = 0.05f;
 
     private AssimpModelLoader model_loader;
     private DisplaySettings win_opts;
@@ -193,18 +198,21 @@ public class Game {
         // Create new entity, then add the model to the entity:
         test0 = new Entity("test0");
         test0.addModel(model);
-        test0.setPosition(0.0f, 0.0f, 3.0f);
-        test0.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
+        test0.setPosition(-2.0f, 0.0f, 3.0f);
+        // test0.updateModelMatrix();
+        // test0.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
         
         test1 = new Entity("test1");
         test1.addModel(model);
-        test1.setPosition(2.0f, 0f, 2.0f);
-        test1.setRotation(1.0f, 0.0f, 0.3f, -65.0f);
+        test1.setPosition(0.0f, 0f, 1.0f);
+        // test1.updateModelMatrix();
+        // test1.setRotation(1.0f, 0.0f, 0.3f, -65.0f);
         
         test2 = new Entity("test2");
         test2.addModel(model);
-        test2.setPosition(-2.0f, 0f, 2.0f);
-        test2.setRotation(0.5f, 1.0f, 0.0f, 65.0f);
+        test2.setPosition(2.0f, 0f, 2.0f);
+        // test2.updateModelMatrix();
+        // test2.setRotation(0.5f, 1.0f, 0.0f, 65.0f);
 
         // add entity to the scene
         scene.add_entity(test0);
@@ -233,7 +241,7 @@ public class Game {
             deltaFps += (now - initialTime) / timeR;
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                input();
+                input(window, scene, (now - initialTime));
                 if (deltaUpdate >= 1.0f) {
                     update();
                     deltaUpdate--;
@@ -246,7 +254,6 @@ public class Game {
             // Calculate and print FPS every 100 milliseconds
             if (now - lastFpsTime >= fpsUpdateTime) {
                 double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
-                // System.out.println("FPS: " + fps);
                 frameCount = 0;
                 lastFpsTime = now;
             }
@@ -257,9 +264,10 @@ public class Game {
 
     private void update() {
         window.update();
-        // test.getTransformationMatrix().
-        
-        
+        test0.getRotation().rotateAxis((float) Math.toRadians(2.0f), 0.3f, 0.1f, 0.5f);
+        test1.getRotation().rotateAxis((float) Math.toRadians(5.0f), 0.0f, 0.2f, 0.5f);
+        test2.getRotation().rotateAxis((float) Math.toRadians(5.0f), 1.0f, 0.50f, 0.0f);
+
     }
 
     private void render() {
@@ -273,8 +281,33 @@ public class Game {
         System.out.println("Banter Engine shutting down...");
     }
 
-    private void input() {
+    public void input(Window window, Scene scene, long diffTimeMillis) {
+        Camera camera = scene.get_camera();
+        float move = MOVEMENT_SPEED;
 
+        if (window.isKeyPressed(GLFW_KEY_W)) {
+            camera.moveForward(move);
+            System.out.println("moving forwards: " + move + " - " + diffTimeMillis);
+        } 
+        if (window.isKeyPressed(GLFW_KEY_S)) {
+            System.out.println("moving backwards: " + move + " - " + diffTimeMillis);
+            camera.moveBackwards(move);
+        }
+        if (window.isKeyPressed(GLFW_KEY_A)) {
+            System.out.println("moving left: " + move + " - " + diffTimeMillis);
+            camera.moveLeft(move);
+        }
+        if (window.isKeyPressed(GLFW_KEY_D)) {
+            System.out.println("moving right: " + move + " - " + diffTimeMillis);
+            camera.moveRight(move);
+        }
+
+        // MouseInput mouseInput = window.getMouseInput();
+        // if (mouseInput.isRightButtonPressed()) {
+        // Vector2f displVec = mouseInput.getDisplVec();
+        // camera.addRotation((float) Math.toRadians(-displVec.x * MOUSE_SENSITIVITY),
+        // (float) Math.toRadians(-displVec.y * MOUSE_SENSITIVITY));
+        // }
     }
 
     private void resize() {
@@ -284,7 +317,7 @@ public class Game {
 
     public void wired() {
         System.out.println("Wireframe mode toggled!");
-        scene.wired();
+        renderer.wired();
     }
 
 }
