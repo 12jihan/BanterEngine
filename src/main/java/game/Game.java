@@ -241,11 +241,11 @@ public class Game {
             deltaFps += (now - initialTime) / timeR;
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                input(window, scene, (now - initialTime));
                 if (deltaUpdate >= 1.0f) {
                     update();
                     deltaUpdate--;
                 }
+                input(window, scene, (now - initialTime));
                 render();
                 frameCount++;
                 deltaFps--;
@@ -283,11 +283,12 @@ public class Game {
 
     public void input(Window window, Scene scene, long diffTimeMillis) {
         Camera camera = scene.get_camera();
+        // System.out.println("camera: " + camera.getPosition());
         float move = MOVEMENT_SPEED;
 
         if (window.isKeyPressed(GLFW_KEY_W)) {
-            camera.moveForward(move);
             System.out.println("moving forwards: " + move + " - " + diffTimeMillis);
+            camera.moveForward(move);
         } 
         if (window.isKeyPressed(GLFW_KEY_S)) {
             System.out.println("moving backwards: " + move + " - " + diffTimeMillis);

@@ -15,7 +15,6 @@ public class Camera {
         right = new Vector3f();
         up = new Vector3f();
         position = new Vector3f();
-        
         viewMatrix = new Matrix4f();
         rotation = new Vector2f();
     }
@@ -46,6 +45,8 @@ public class Camera {
     }
 
     public void moveForward(float inc) {
+        System.out.println("inc: " + inc);
+        System.out.println("matrix: " + viewMatrix);
         viewMatrix.positiveZ(direction).negate().mul(inc);
         position.add(direction);
         recalculate();

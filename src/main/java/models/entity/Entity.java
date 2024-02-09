@@ -56,21 +56,23 @@ public class Entity {
         this.position.z = z;
         System.out.println("Position set: " + this.position);
     }
-
+    
     public Quaternionf getRotation() {
         return rotation;
     }
-
+    
     public void setRotation(float x, float y, float z, float angle) {
         this.rotation.fromAxisAngleRad(x, y, z, angle);
+        System.out.println("Rotation set: " + this.rotation);
     }
-
+    
     public float getScale() {
         return scale;
     }
-
+    
     public void setScale(float scale) {
         this.scale = scale;
+        System.out.println("scale set: " + this.scale);
     }
 
     public void addModel(RawModel model) {
