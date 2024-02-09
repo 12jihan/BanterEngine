@@ -2,22 +2,17 @@ package utils;
 
 import org.joml.Matrix4f;
 
-@SuppressWarnings("unused")
 public class Projection {
 
     private static final float FOV = (float) Math.toRadians(80.0f);
     private static final float Z_FAR = 1000.0f;
     private static final float Z_NEAR = 0.1f;
-    private int width;
-    private int height;
 
     private Matrix4f projMatrix;
     
     public Projection(int width, int height) {
         projMatrix = new Matrix4f();
         updateProjMatrix(width, height);
-        // this.width = width;
-        // this.height = height;
     }
 
     public Matrix4f getProjMatrix() {

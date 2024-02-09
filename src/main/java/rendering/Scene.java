@@ -80,7 +80,7 @@ public class Scene {
 
         // Camera and projection of camera:
         view_matrix = camera.getViewMatrix();
-        projection_matrix = new Matrix4f().identity();
+        projection_matrix = projection.getProjMatrix();
 
         // TODO: Camera control needs to be moved into an actual input handler device.
         view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));

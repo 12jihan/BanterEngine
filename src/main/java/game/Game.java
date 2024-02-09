@@ -230,36 +230,53 @@ public class Game {
         float deltaFps = 0;
         int frameCount = 0;
         long lastFpsTime = initialTime;
+        long updateTime = initialTime;
         long fpsUpdateTime = 50; // Update FPS every 100 milliseconds
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+        
         while (!window.windowShouldClose() && running) {
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
             deltaFps += (now - initialTime) / timeR;
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                if (deltaUpdate >= 1.0f) {
-                    update();
-                    deltaUpdate--;
-                }
-                input(window, scene, (now - initialTime));
-                render();
-                frameCount++;
-                deltaFps--;
+                input(window, scene, now - initialTime);
             }
+
+            if (deltaUpdate >= 1) {
+                long diffTimeMillis = now - updateTime;
+                update();
+                updateTime = now;
+                deltaUpdate--;
+            }
+
+            if (targetFps <= 0 || deltaFps >= 1) {
+                render();
+                deltaFps--;
+
+            }
+            initialTime = now;
+
+            // if (targetFps <= 0 || deltaFps >= 1) {
+            //     if (deltaUpdate >= 1.0f) {
+            //         deltaUpdate--;
+            //     }
+            //     frameCount++;
+            //     deltaFps--;
+            // }
 
             // Calculate and print FPS every 100 milliseconds
-            if (now - lastFpsTime >= fpsUpdateTime) {
-                double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
-                frameCount = 0;
-                lastFpsTime = now;
-            }
+            // if (now - lastFpsTime >= fpsUpdateTime) {
+            //     double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
+            //     frameCount = 0;
+            //     lastFpsTime = now;
+            // }
 
-            initialTime = now;
+            // initialTime = now;
         }
+        cleanup();
     }
 
     private void update() {

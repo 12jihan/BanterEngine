@@ -2,7 +2,6 @@ package utils;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
-@SuppressWarnings("unused")
 public class TimeManager {
     /**
      * System time since last loop.
