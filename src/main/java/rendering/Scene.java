@@ -83,8 +83,8 @@ public class Scene {
         projection_matrix = projection.getProjMatrix();
 
         // TODO: Camera control needs to be moved into an actual input handler device.
-        view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));
-        view_matrix.rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
+        // view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));
+        // view_matrix.rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
 
         // mesh.init(positions, colors, indices);
         // setup texture:
