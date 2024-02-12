@@ -218,6 +218,7 @@ public class Game {
         scene.add_entity(test0);
         scene.add_entity(test1);
         scene.add_entity(test2);
+        scene.get_camera().setPosition(0.0f, 0.0f, 5.0f);
         // initialize the renderer:
         renderer.init();
     }
