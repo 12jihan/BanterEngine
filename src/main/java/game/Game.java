@@ -9,6 +9,7 @@ import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import io.DisplaySettings;
+import io.MouseInput;
 import io.Window;
 import models.entity.AssimpModelLoader;
 import models.entity.Entity;
@@ -29,16 +30,27 @@ public class Game {
     private static final float MOUSE_SENSITIVITY = 0.1f;
     private static final float MOVEMENT_SPEED = 0.05f;
 
-    private AssimpModelLoader model_loader;
-    private DisplaySettings win_opts;
+    // Window things:
     private Window window;
-    private Scene scene;
+    private DisplaySettings win_opts;
+    
+    // Inputs:
+    private MouseInput mouse_input;
+    
+    // Models:
+    private AssimpModelLoader model_loader;
+    private RawModel model;
+    
+    // Added entities:
     private Entity test0;
     private Entity test1;
     private Entity test2;
-    private RawModel model;
+    
+    // Scene/Renderer:
+    private Scene scene;
     private Renderer renderer;
 
+    // Other important settings:
     private int targetFps;
     private int targetUps;
 
@@ -60,7 +72,7 @@ public class Game {
                     return null;
                 });
         targetFps = 60;
-        targetUps = 30;
+        targetUps = 60;
         scene = new Scene(window);
         renderer = new Renderer(scene);
 
@@ -245,7 +257,7 @@ public class Game {
             if (targetFps <= 0 || deltaFps >= 1) {
                 input(window, scene, now - initialTime);
             }
-
+            
             if (deltaUpdate >= 1) {
                 long diffTimeMillis = now - updateTime;
                 update();
