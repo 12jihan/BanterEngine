@@ -2,9 +2,8 @@ package game;
 
 import javax.annotation.processing.SupportedSourceVersion;
 
-import display.DisplaySettings;
-import display.WindowManager;
-import interfaces.GameLogic;
+import io.DisplaySettings;
+import io.Window;
 
 /**
  * Hello world!

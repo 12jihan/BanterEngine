@@ -4,21 +4,43 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import models.Model;
+import models.entity.RawModel;
 
 @SuppressWarnings("unused")
 public class Renderer {
 
-    public void prepare() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.5f, 0.2f, 0f, 0f);
+    private Scene scene;
+    private boolean wired = false;
+
+    public Renderer(Scene scene) {
+        this.scene = scene;
     }
 
-    public void render(Scene scene) {
-        // TODO: Take a look at this:
-        // glBindVertexArray(model.getVaoID());
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    public void init() {
+        scene.init();
+    }
+
+    public void render() {
+        glClearColor(0.1f, 0.1f, 0f, 0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Use this to render in wireframe mode:
+        if (wired) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
+        scene.render();
+        // Maybe this should be use instead but i'm not sure yet:
         glBindVertexArray(0);
         glDisableVertexAttribArray(0);
+    }
+
+    public void wired() {
+        wired = !wired;
+    }
+
+    public void cleanup() {
+        scene.cleanup();
     }
 }

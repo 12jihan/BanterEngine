@@ -14,6 +14,8 @@ import java.nio.IntBuffer;
 import java.util.concurrent.Callable;
 import org.pmw.tinylog.Logger;
 
+import io.DisplaySettings;
+
 // import input.InputHandler;
 
 public class WindowManager {
@@ -170,18 +172,20 @@ public class WindowManager {
      * Other specific settings for window:
      **/
 
-    public boolean isKeyPressed(int keycode) {
-        return glfwGetKey(window, keycode) == GLFW_PRESS;
-    }
-
+    
     public void pollEvents() {
         glfwPollEvents();
     }
-
+    
     public boolean windowShouldClose() {
         return glfwWindowShouldClose(window);
     }
-
+    
+    public boolean isKeyPressed(int keycode) {
+        System.out.println("lol");
+        return glfwGetKey(window, keycode) == GLFW_PRESS;
+    }
+    
     protected void resized(int width, int height) {
         this.width = width;
         this.height = height;
@@ -198,14 +202,15 @@ public class WindowManager {
         // We will detect this in the rendering loop:
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
-        if (key == GLFW_KEY_0 && action == GLFW_RELEASE) {
+        if (key == GLFW_KEY_COMMA && action == GLFW_RELEASE) {
             try {
                 // Attempt to call the key callback:
-                keyInputFunc.call();
                 System.out.println(key);
+                keyInputFunc.call();
             } catch (Exception e) {
                 Logger.error("Error with keycall back:\n\t -", e);
             }
-        };
+        }
+        ;
     }
 }
