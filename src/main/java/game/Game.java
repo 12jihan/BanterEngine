@@ -53,7 +53,6 @@ public class Game {
     // Other important settings:
     private int targetFps;
     private int targetUps;
-
     private int width;
     private int height;
     private boolean running = false;
@@ -73,6 +72,7 @@ public class Game {
                 });
         targetFps = 60;
         targetUps = 60;
+        mouse_input = new MouseInput(window.getWindow());
         scene = new Scene(window);
         renderer = new Renderer(scene);
 
@@ -255,7 +255,7 @@ public class Game {
             deltaFps += (now - initialTime) / timeR;
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                input(window, scene, now - initialTime);
+                keyboard_input(window, scene, now - initialTime);
             }
             
             if (deltaUpdate >= 1) {
@@ -294,7 +294,7 @@ public class Game {
 
     private void update() {
         window.update();
-        test0.getRotation().rotateAxis((float) Math.toRadians(2.0f), 0.3f, 0.1f, 0.5f);
+        test0.getRotation().rotateAxis((float) Math.toRadians(1.0f), 0.3f, 0.1f, 0.5f);
         test1.getRotation().rotateAxis((float) Math.toRadians(5.0f), 0.0f, 0.2f, 0.5f);
         test2.getRotation().rotateAxis((float) Math.toRadians(5.0f), 1.0f, 0.50f, 0.0f);
 
@@ -311,7 +311,7 @@ public class Game {
         System.out.println("Banter Engine shutting down...");
     }
 
-    public void input(Window window, Scene scene, long diffTimeMillis) {
+    public void keyboard_input(Window window, Scene scene, long diffTimeMillis) {
         Camera camera = scene.get_camera();
         // System.out.println("camera: " + camera.getPosition());
         float move = MOVEMENT_SPEED;
@@ -332,13 +332,6 @@ public class Game {
             System.out.println("moving right: " + move + " - " + diffTimeMillis);
             camera.moveRight(move);
         }
-
-        // MouseInput mouseInput = window.getMouseInput();
-        // if (mouseInput.isRightButtonPressed()) {
-        // Vector2f displVec = mouseInput.getDisplVec();
-        // camera.addRotation((float) Math.toRadians(-displVec.x * MOUSE_SENSITIVITY),
-        // (float) Math.toRadians(-displVec.y * MOUSE_SENSITIVITY));
-        // }
     }
 
     private void resize() {
