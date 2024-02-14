@@ -345,7 +345,6 @@ public class Game {
         if (keyboard.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
             camera.moveDown(_speed);
         }
-        System.out.println("Speed: " + _speed);
     }
 
     public void mouse_input(long window, Camera camera, float speed, long diffTimeMillis) {
@@ -356,9 +355,7 @@ public class Game {
         float rotationX = (float) Math.toRadians(deltaY * MOUSE_SENSITIVITY); // Pitch
         float rotationY = (float) Math.toRadians(deltaX * MOUSE_SENSITIVITY); // Yaw
 
-        System.out.println(mouse.isLeftButtonPressed() + " - " + mouse.isRightButtonPressed());
         if (mouse.isLeftButtonPressed()) {
-            System.out.println("Mouse left button pressed!");
             camera.addRotation(rotationX, rotationY);
         }
 

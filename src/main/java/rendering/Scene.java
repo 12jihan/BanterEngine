@@ -30,7 +30,7 @@ import utils.UniformsMap;
 @SuppressWarnings("unused")
 public class Scene {
     private UniformsMap uniformsMap;
-    private static Shader shader;
+    private static Shader main_shader;
     private static Mesh mesh1;
     private static Mesh mesh2;
     private static Texture texture;
@@ -56,7 +56,7 @@ public class Scene {
     private static float scale;
     // ------
 
-    private int shader_id;
+    private int main_shader_id;
     private int texture_uni_0;
 
     public Scene(Window window) {
@@ -67,16 +67,16 @@ public class Scene {
         camera = new Camera();
         projection = new Projection(width, height);
 
-        shader = new Shader();
+        main_shader = new Shader();
         scale = 1;
     }
 
     public void init() {
         System.out.println("entities list: " + entities.size());
         // setting up shader:
-        shader.init();
-        shader_id = shader.getShaderProgramId();
-        uniformsMap = new UniformsMap(shader_id);
+        main_shader.init("/Users/jareemhoff/dev/java/banter/res/shaders/core/vertex.glsl", "/Users/jareemhoff/dev/java/banter/res/shaders/core/fragment.glsl");
+        main_shader_id = main_shader.getShaderProgramId();
+        uniformsMap = new UniformsMap(main_shader_id);
 
         // Camera and projection of camera:
         view_matrix = camera.getViewMatrix();
@@ -88,7 +88,7 @@ public class Scene {
 
         // mesh.init(positions, colors, indices);
         // setup texture:
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", shader_id);
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", main_shader_id);
         // Activate the shader to set the uniform
         // shader.use();
 
@@ -104,7 +104,7 @@ public class Scene {
     public void render() {
 
         // Shader Uniforms:
-        shader.use();
+        main_shader.use();
         uniformsMap.setUniform("projection_matrix", projection.getProjMatrix());
         uniformsMap.setUniform("view_matrix", view_matrix);
         uniformsMap.setUniform("texture_sampler_0", 0);
@@ -134,7 +134,7 @@ public class Scene {
     }
 
     public void cleanup() {
-        shader.clean();
+        main_shader.clean();
     }
 
     private void log_uniforms() {
