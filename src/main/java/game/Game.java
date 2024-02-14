@@ -288,7 +288,7 @@ public class Game {
         // Keyboard input:
         keyboard_input(_window, camera, speed, diffTimeMillis);
         // Mouse input:
-
+        mouse_input(_window, camera, speed, diffTimeMillis);
     }
 
     // Updating any data that needs it:
@@ -298,9 +298,9 @@ public class Game {
         if (rotation >= 360) {
             rotation = 0;
         }
-        rotate_entity(test0, 1, 0, 0, rotation, false);
-        rotate_entity(test1, 0, 1, 0, rotation, false);
-        rotate_entity(test2, 0, 0, 1, rotation, false);
+        // rotate_entity(test0, 1, 0, 0, rotation, false);
+        // rotate_entity(test1, 0, 1, 0, rotation, false);
+        // rotate_entity(test2, 0, 0, 1, rotation, false);
     }
 
     private void render() {
@@ -315,8 +315,7 @@ public class Game {
         System.out.println("Banter Engine shutting down...");
     }
 
-    public void keyboard_input(long window, Camera camera, float speed,long diffTimeMillis) {
-        
+    public void keyboard_input(long window, Camera camera, float speed,long diffTimeMillis) {   
 
         if (keyboard.isKeyPressed(GLFW_KEY_W)) {
             System.out.println("moving forwards: " + speed + " - " + diffTimeMillis);
@@ -334,20 +333,35 @@ public class Game {
             System.out.println("moving right: " + speed + " - " + diffTimeMillis);
             camera.moveRight(speed);
         }
+        if (keyboard.isKeyPressed(GLFW_KEY_SPACE)) {
+            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
+            camera.moveUp(speed);
+        }
+        if (keyboard.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
+            camera.moveDown(speed);
+        }
     }
 
-    public void mouse_input() {
-        Camera camera = scene.get_camera();
+    public void mouse_input(long window, Camera camera, float speed, long diffTimeMillis) {
         // update scroll values back to 0:
         double deltaX = mouse.getX() - mouse.getLastX();
-        double deltaY = mouse.getLastY() - mouse.getY();
-        // System.out.println("Mouse X: " + deltaX + " - Mouse Y: " + deltaX);
+        double deltaY = mouse.getY() - mouse.getLastY();
+        // double deltaY = mouse.getLastY() - mouse.getY();
+        float rotationX = (float) Math.toRadians(deltaY * MOUSE_SENSITIVITY); // Pitch
+        float rotationY = (float) Math.toRadians(deltaX * MOUSE_SENSITIVITY); // Yaw
+        
+        System.out.println(mouse.isLeftButtonPressed() + " - " + mouse.isRightButtonPressed());
         if (mouse.isLeftButtonPressed()) {
+            System.out.println("Mouse left button pressed!");
+            camera.addRotation(rotationX, rotationY);
         }
-
+        
         if (mouse.isRightButtonPressed()) {
-
+            System.out.println("Mouse right button pressed!");
+            
         }
+
         mouse.update();
     }
 

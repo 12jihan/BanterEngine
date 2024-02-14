@@ -130,6 +130,10 @@ public class MouseInput {
         return scrollY;
     }
 
+    public boolean isEntered() {
+        return entered;
+    }
+
     public void cleanup() {
         mouseButtonCallback.free();
         cursorPosCallback.free();
