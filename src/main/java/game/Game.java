@@ -8,8 +8,9 @@ import java.util.Timer;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
+import input.KeyboardInput;
+import input.MouseInput;
 import io.DisplaySettings;
-import io.MouseInput;
 import io.Window;
 import models.entity.AssimpModelLoader;
 import models.entity.Entity;
@@ -33,19 +34,20 @@ public class Game {
     // Window things:
     private Window window;
     private DisplaySettings win_opts;
-    
+
     // Inputs:
-    private MouseInput mouse_input;
-    
+    private MouseInput mouse;
+    private KeyboardInput keyboard;
+
     // Models:
     private AssimpModelLoader model_loader;
     private RawModel model;
-    
+
     // Added entities:
     private Entity test0;
     private Entity test1;
     private Entity test2;
-    
+
     // Scene/Renderer:
     private Scene scene;
     private Renderer renderer;
@@ -56,6 +58,7 @@ public class Game {
     private int width;
     private int height;
     private boolean running = false;
+    float rotation = 0.0f;
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
@@ -72,7 +75,6 @@ public class Game {
                 });
         targetFps = 60;
         targetUps = 60;
-        mouse_input = new MouseInput(window.getWindow());
         scene = new Scene(window);
         renderer = new Renderer(scene);
 
@@ -202,35 +204,33 @@ public class Game {
         };
 
         window.init();
+        keyboard = new KeyboardInput(window);
+        mouse = new MouseInput(window);
 
         // create the needed mesh and add it to the mix
         Mesh mesh = new Mesh();
         mesh.init(positions, colors, texture_coords, indices);
         RawModel model = new RawModel(mesh);
+
         // Create new entity, then add the model to the entity:
         test0 = new Entity("test0");
         test0.addModel(model);
-        test0.setPosition(-2.0f, 0.0f, 3.0f);
-        // test0.updateModelMatrix();
-        // test0.setRotation(1.0f, 0.0f, 0.0f, -45.0f);
-        
+        position_entity(test0, -2.0f, 0.0f, 0.0f);
+
         test1 = new Entity("test1");
         test1.addModel(model);
-        test1.setPosition(0.0f, 0f, 1.0f);
-        // test1.updateModelMatrix();
-        // test1.setRotation(1.0f, 0.0f, 0.3f, -65.0f);
-        
+        position_entity(test1, 0.0f, 0.0f, 0.0f);
+
         test2 = new Entity("test2");
         test2.addModel(model);
-        test2.setPosition(2.0f, 0f, 2.0f);
-        // test2.updateModelMatrix();
-        // test2.setRotation(0.5f, 1.0f, 0.0f, 65.0f);
-
+        position_entity(test2, 2.0f, 0.0f, 0.0f);
         // add entity to the scene
         scene.add_entity(test0);
         scene.add_entity(test1);
         scene.add_entity(test2);
+        // Set camera position:
         scene.get_camera().setPosition(0.0f, 0.0f, 5.0f);
+
         // initialize the renderer:
         renderer.init();
     }
@@ -248,16 +248,18 @@ public class Game {
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
+
         while (!window.windowShouldClose() && running) {
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
             deltaFps += (now - initialTime) / timeR;
 
+            // Inputs are updated:
             if (targetFps <= 0 || deltaFps >= 1) {
-                keyboard_input(window, scene, now - initialTime);
+                input(window, scene, now - initialTime);
             }
-            
+
+            // Updates are updated:
             if (deltaUpdate >= 1) {
                 long diffTimeMillis = now - updateTime;
                 update();
@@ -265,39 +267,40 @@ public class Game {
                 deltaUpdate--;
             }
 
+            // Renders are updated:
             if (targetFps <= 0 || deltaFps >= 1) {
                 render();
                 deltaFps--;
 
             }
             initialTime = now;
-
-            // if (targetFps <= 0 || deltaFps >= 1) {
-            //     if (deltaUpdate >= 1.0f) {
-            //         deltaUpdate--;
-            //     }
-            //     frameCount++;
-            //     deltaFps--;
-            // }
-
-            // Calculate and print FPS every 100 milliseconds
-            // if (now - lastFpsTime >= fpsUpdateTime) {
-            //     double fps = (double) frameCount / ((now - lastFpsTime) / 1000.0);
-            //     frameCount = 0;
-            //     lastFpsTime = now;
-            // }
-
-            // initialTime = now;
         }
         cleanup();
     }
 
+    // Handling all inputs:
+    private void input(Window window, Scene scene, long diffTimeMillis) {
+        long _window = window.getWindow();
+        Camera camera = scene.get_camera();
+        // System.out.println("camera: " + camera.getPosition());
+        float speed = MOVEMENT_SPEED;
+
+        // Keyboard input:
+        keyboard_input(_window, camera, speed, diffTimeMillis);
+        // Mouse input:
+
+    }
+
+    // Updating any data that needs it:
     private void update() {
         window.update();
-        test0.getRotation().rotateAxis((float) Math.toRadians(1.0f), 0.3f, 0.1f, 0.5f);
-        test1.getRotation().rotateAxis((float) Math.toRadians(5.0f), 0.0f, 0.2f, 0.5f);
-        test2.getRotation().rotateAxis((float) Math.toRadians(5.0f), 1.0f, 0.50f, 0.0f);
-
+        rotation += 1.5f;
+        if (rotation >= 360) {
+            rotation = 0;
+        }
+        rotate_entity(test0, 1, 0, 0, rotation, false);
+        rotate_entity(test1, 0, 1, 0, rotation, false);
+        rotate_entity(test2, 0, 0, 1, rotation, false);
     }
 
     private void render() {
@@ -308,40 +311,81 @@ public class Game {
         System.out.println("Banter Engine cleaning...");
         renderer.cleanup();
         window.cleanup();
+        mouse.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
 
-    public void keyboard_input(Window window, Scene scene, long diffTimeMillis) {
-        Camera camera = scene.get_camera();
-        // System.out.println("camera: " + camera.getPosition());
-        float move = MOVEMENT_SPEED;
+    public void keyboard_input(long window, Camera camera, float speed,long diffTimeMillis) {
+        
 
-        if (window.isKeyPressed(GLFW_KEY_W)) {
-            System.out.println("moving forwards: " + move + " - " + diffTimeMillis);
-            camera.moveForward(move);
-        } 
-        if (window.isKeyPressed(GLFW_KEY_S)) {
-            System.out.println("moving backwards: " + move + " - " + diffTimeMillis);
-            camera.moveBackwards(move);
+        if (keyboard.isKeyPressed(GLFW_KEY_W)) {
+            System.out.println("moving forwards: " + speed + " - " + diffTimeMillis);
+            camera.moveForward(speed);
         }
-        if (window.isKeyPressed(GLFW_KEY_A)) {
-            System.out.println("moving left: " + move + " - " + diffTimeMillis);
-            camera.moveLeft(move);
+        if (keyboard.isKeyPressed(GLFW_KEY_S)) {
+            System.out.println("moving backwards: " + speed + " - " + diffTimeMillis);
+            camera.moveBackwards(speed);
         }
-        if (window.isKeyPressed(GLFW_KEY_D)) {
-            System.out.println("moving right: " + move + " - " + diffTimeMillis);
-            camera.moveRight(move);
+        if (keyboard.isKeyPressed(GLFW_KEY_A)) {
+            System.out.println("moving left: " + speed + " - " + diffTimeMillis);
+            camera.moveLeft(speed);
+        }
+        if (keyboard.isKeyPressed(GLFW_KEY_D)) {
+            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
+            camera.moveRight(speed);
         }
     }
 
+    public void mouse_input() {
+        Camera camera = scene.get_camera();
+        // update scroll values back to 0:
+        double deltaX = mouse.getX() - mouse.getLastX();
+        double deltaY = mouse.getLastY() - mouse.getY();
+        // System.out.println("Mouse X: " + deltaX + " - Mouse Y: " + deltaX);
+        if (mouse.isLeftButtonPressed()) {
+        }
+
+        if (mouse.isRightButtonPressed()) {
+
+        }
+        mouse.update();
+    }
+
+    /**
+     * These are the miscellaneous methods for the game:
+     */
+
+    // Screen resize:
     private void resize() {
         width = window.getWidth();
         height = window.getHeight();
     }
 
+    // Wireframe mode: TODO - Fix this method.
     public void wired() {
         System.out.println("Wireframe mode toggled!");
         renderer.wired();
+    }
+
+    // Scale Entity:
+    public void scale_entity(Entity entity, float scale) {
+        entity.setScale(scale);
+        entity.updateModelMatrix();
+    }
+
+    // Entity Position:
+    public void position_entity(Entity entity, float x, float y, float z) {
+        entity.setPosition(x, y, z);
+        entity.updateModelMatrix();
+    }
+
+    // Entity Rotation:
+    public void rotate_entity(Entity entity, int x, int y, int z, float degrees, boolean debug) {
+        entity.setRotation(x, y, z, (float) Math.toRadians(degrees));
+        entity.updateModelMatrix();
+        if (debug) {
+            System.out.println("DEBUGGING ENTITY ROTATION: " + entity.getId() + "\n" + entity.getModelMatrix());
+        }
     }
 
 }

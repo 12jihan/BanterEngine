@@ -1,35 +1,48 @@
-package io;
+package input;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
+import org.joml.Vector2f;
+import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import io.Window;
+
 public class MouseInput {
-    private final long window;
+    private Window window;
+    private long window_context;
 
     private double xPos, yPos, lastX, lastY, scrollX, scrollY;
     private boolean leftButtonPressed, rightButtonPressed;
+    private Vector2f displVec = new Vector2f();
+    private boolean entered;
+
 
     private final GLFWMouseButtonCallback mouseButtonCallback;
     private final GLFWCursorPosCallback cursorPosCallback;
     private final GLFWScrollCallback scrollCallback;
+    private final GLFWCursorEnterCallback cursorEnterCallback;
 
-    public MouseInput(long window) {
+    public MouseInput(Window window) {
         this.window = window;
+        this.window_context = this.window.getWindow();
+        this.entered = false;
 
         // Mouse button callback:
         mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE;
-                rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE;
+                leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
+                rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
             }
         };
 
@@ -41,7 +54,6 @@ public class MouseInput {
                 lastY = yPos;
                 xPos = xpos;
                 yPos = ypos;
-
             }
         };
 
@@ -54,15 +66,36 @@ public class MouseInput {
             }
         };
 
+        // Enter callback:
+        cursorEnterCallback = new GLFWCursorEnterCallback() {
+            @Override
+            public void invoke(long window, boolean entered) {
+                if (entered) {
+                    System.out.println("aaaah yeahh!");
+                } else {
+                    leftButtonPressed = false;
+                    rightButtonPressed = false;
+                }
+            }
+        };
+
         // Set the callbacks:
-        glfwSetMouseButtonCallback(this.window, mouseButtonCallback);
-        glfwSetCursorPosCallback(this.window, cursorPosCallback);
-        glfwSetScrollCallback(this.window, scrollCallback);
+        glfwSetCursorEnterCallback(this.window_context, cursorEnterCallback);
+        glfwSetMouseButtonCallback(this.window_context, mouseButtonCallback);
+        glfwSetCursorPosCallback(this.window_context, cursorPosCallback);
+        glfwSetScrollCallback(this.window_context, scrollCallback);
     }
 
     public void update() {
         scrollX = 0;
         scrollY = 0;
+
+        displVec.x = 0;
+        displVec.y = 0;
+
+        if (lastX > 0 && lastY > 0) {
+            
+        }
     }
 
     public double getX() {
@@ -101,6 +134,7 @@ public class MouseInput {
         mouseButtonCallback.free();
         cursorPosCallback.free();
         scrollCallback.free();
+        cursorEnterCallback.free();
     }
 
 }

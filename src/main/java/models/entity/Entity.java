@@ -32,9 +32,6 @@ public class Entity {
     }
 
     // Update the entity's state (e.g., apply physics, handle user input)
-    public void updateModelMatrix() {
-        model_matrix.translationRotateScale(this.position, this.rotation, this.scale);
-    }
 
     // Get the transformation matrix of this entity
     public Matrix4f getTransformationMatrix() {
@@ -50,29 +47,26 @@ public class Entity {
         return position;
     }
 
+    public Quaternionf getRotation() {
+        return rotation;
+    }
+
     public void setPosition(float x, float y, float z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
-        System.out.println("Position set: " + this.position);
     }
-    
-    public Quaternionf getRotation() {
-        return rotation;
-    }
-    
+
     public void setRotation(float x, float y, float z, float angle) {
         this.rotation.fromAxisAngleRad(x, y, z, angle);
-        System.out.println("Rotation set: " + this.rotation);
     }
-    
+
     public float getScale() {
         return scale;
     }
-    
+
     public void setScale(float scale) {
         this.scale = scale;
-        System.out.println("scale set: " + this.scale);
     }
 
     public void addModel(RawModel model) {
@@ -81,5 +75,13 @@ public class Entity {
 
     public RawModel getModel() {
         return model;
+    }
+
+    public Matrix4f getModelMatrix() {
+        return model_matrix;
+    }
+
+    public void updateModelMatrix() {
+        model_matrix.translationRotateScale(this.position, this.rotation, this.scale);
     }
 }

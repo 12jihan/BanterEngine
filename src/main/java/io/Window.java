@@ -25,7 +25,6 @@ public class Window {
     // Have not implemented the mouse input just yet:
     // private InputHandler mouseInput;
     private Callable<Void> resizeFunc;
-    private Callable<Void> keyInputFunc;
 
     public Window(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
             Callable<Void> keyInputFunc) {
@@ -33,7 +32,6 @@ public class Window {
         this.height = win_opts.height;
         this.width = win_opts.width;
         this.resizeFunc = resizeFunc;
-        this.keyInputFunc = keyInputFunc;
         this.win_opts = win_opts;
     }
 
@@ -86,10 +84,6 @@ public class Window {
         // Set the error callback:
         glfwSetErrorCallback((int errorCode, long msgPtr) -> Logger.error("Error code [{}], msg [{}]", errorCode,
                 MemoryUtil.memUTF8(msgPtr)));
-        // Set the key callback:
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            keyCallBack(key, action);
-        });
         // Set the window to be the current context:
         glfwMakeContextCurrent(window);
         // turn on vsync if fps is greater than 0:
@@ -174,10 +168,6 @@ public class Window {
      * Other specific settings for window:
      **/
 
-    public boolean isKeyPressed(int keycode) {
-        return glfwGetKey(window, keycode) == GLFW_PRESS;
-    }
-
     public void pollEvents() {
         glfwPollEvents();
     }
@@ -195,20 +185,5 @@ public class Window {
         } catch (Exception excp) {
             Logger.error("Error calling resize callback:\n\t- ", excp);
         }
-    }
-
-    public void keyCallBack(int key, int action) {
-        // System.out.println("Key:\n" + key + "\nAction:\n" + action);
-        // We will detect this in the rendering loop:
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-            glfwSetWindowShouldClose(window, true);
-        if (key == GLFW_KEY_COMMA && action == GLFW_RELEASE) {
-            try {
-                // Attempt to call the key callback:
-                keyInputFunc.call();
-            } catch (Exception e) {
-                Logger.error("Error with keycall back:\n\t -", e);
-            }
-        };
     }
 }
