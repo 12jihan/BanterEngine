@@ -14,6 +14,9 @@ import java.nio.IntBuffer;
 import java.util.concurrent.Callable;
 import org.pmw.tinylog.Logger;
 
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
+
 // import input.InputHandler;
 
 public class Window {
@@ -22,10 +25,8 @@ public class Window {
     private int height, width;
     private String title;
     private DisplaySettings win_opts;
-    // Have not implemented the mouse input just yet:
-    // private InputHandler mouseInput;
     private Callable<Void> resizeFunc;
-
+    
     public Window(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
             Callable<Void> keyInputFunc) {
         this.title = title;

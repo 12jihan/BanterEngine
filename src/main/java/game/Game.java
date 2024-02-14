@@ -28,7 +28,7 @@ import utils.TimeManager;
 public class Game {
     public static final int TARGET_FPS = 60;
     public static final int TARGET_UPS = 60;
-    private static final float MOUSE_SENSITIVITY = 0.1f;
+    private static final float MOUSE_SENSITIVITY = 0.10f;
     private static final float MOVEMENT_SPEED = 0.05f;
 
     // Window things:
@@ -298,9 +298,9 @@ public class Game {
         if (rotation >= 360) {
             rotation = 0;
         }
-        // rotate_entity(test0, 1, 0, 0, rotation, false);
-        // rotate_entity(test1, 0, 1, 0, rotation, false);
-        // rotate_entity(test2, 0, 0, 1, rotation, false);
+        rotate_entity(test0, 1, 0, 0, rotation, false);
+        rotate_entity(test1, 0, 1, 0, rotation, false);
+        rotate_entity(test2, 0, 0, 1, rotation, false);
     }
 
     private void render() {
@@ -315,32 +315,37 @@ public class Game {
         System.out.println("Banter Engine shutting down...");
     }
 
-    public void keyboard_input(long window, Camera camera, float speed,long diffTimeMillis) {   
+    public void keyboard_input(long window, Camera camera, float speed, long diffTimeMillis) {
+        float _speed = speed;
 
+        if (keyboard.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+            _speed = speed * 2.5f;
+        }
         if (keyboard.isKeyPressed(GLFW_KEY_W)) {
-            System.out.println("moving forwards: " + speed + " - " + diffTimeMillis);
-            camera.moveForward(speed);
+            camera.moveForward(_speed);
         }
         if (keyboard.isKeyPressed(GLFW_KEY_S)) {
-            System.out.println("moving backwards: " + speed + " - " + diffTimeMillis);
-            camera.moveBackwards(speed);
+
+            camera.moveBackwards(_speed);
         }
         if (keyboard.isKeyPressed(GLFW_KEY_A)) {
-            System.out.println("moving left: " + speed + " - " + diffTimeMillis);
-            camera.moveLeft(speed);
+
+            camera.moveLeft(_speed);
         }
         if (keyboard.isKeyPressed(GLFW_KEY_D)) {
-            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
-            camera.moveRight(speed);
+
+            camera.moveRight(_speed);
+        }
+        if (keyboard.isKeyPressed(GLFW_KEY_D)) {
+            camera.moveRight(_speed);
         }
         if (keyboard.isKeyPressed(GLFW_KEY_SPACE)) {
-            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
-            camera.moveUp(speed);
+            camera.moveUp(_speed);
         }
         if (keyboard.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
-            System.out.println("moving right: " + speed + " - " + diffTimeMillis);
-            camera.moveDown(speed);
+            camera.moveDown(_speed);
         }
+        System.out.println("Speed: " + _speed);
     }
 
     public void mouse_input(long window, Camera camera, float speed, long diffTimeMillis) {
@@ -350,16 +355,16 @@ public class Game {
         // double deltaY = mouse.getLastY() - mouse.getY();
         float rotationX = (float) Math.toRadians(deltaY * MOUSE_SENSITIVITY); // Pitch
         float rotationY = (float) Math.toRadians(deltaX * MOUSE_SENSITIVITY); // Yaw
-        
+
         System.out.println(mouse.isLeftButtonPressed() + " - " + mouse.isRightButtonPressed());
         if (mouse.isLeftButtonPressed()) {
             System.out.println("Mouse left button pressed!");
             camera.addRotation(rotationX, rotationY);
         }
-        
+
         if (mouse.isRightButtonPressed()) {
             System.out.println("Mouse right button pressed!");
-            
+
         }
 
         mouse.update();
