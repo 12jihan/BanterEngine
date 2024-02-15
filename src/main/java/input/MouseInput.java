@@ -64,10 +64,13 @@ public class MouseInput {
 
         // Scroll callback:
         scrollCallback = new GLFWScrollCallback() {
+            ImGuiIO io = ImGui.getIO();
             @Override
             public void invoke(long window, double x_offset, double y_offset) {
                 scrollX += x_offset;
                 scrollY += y_offset;
+                io.setMouseWheel(io.getMouseWheelH() + (float) x_offset);
+                io.setMouseWheel(io.getMouseWheel() + (float) y_offset);
             }
         };
 
