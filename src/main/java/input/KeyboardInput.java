@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
 import io.Window;
 
+@SuppressWarnings("unused")
 public class KeyboardInput {
     private final boolean[] keys = new boolean[GLFW_KEY_LAST];
     private final long window;

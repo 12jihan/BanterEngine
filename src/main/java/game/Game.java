@@ -3,8 +3,9 @@ package game;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import imgui.ImGui;
+import imgui.*;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiKey;
 import imgui.gl3.ImGuiImplGl3;
 
 import java.util.Timer;
@@ -16,6 +17,7 @@ import input.KeyboardInput;
 import input.MouseInput;
 import io.DisplaySettings;
 import io.Window;
+import models.CubeModel;
 import models.entity.AssimpModelLoader;
 import models.entity.Entity;
 import models.entity.RawModel;
@@ -38,6 +40,9 @@ public class Game {
     // Window things:
     private Window window;
     private DisplaySettings win_opts;
+
+    // GUI things:
+    private ImGuiImplGl3 gui;
 
     // Inputs:
     private MouseInput mouse;
@@ -77,6 +82,7 @@ public class Game {
                     wired();
                     return null;
                 });
+        gui = new ImGuiImplGl3();
         targetFps = 60;
         targetUps = 60;
         scene = new Scene(window);
@@ -97,143 +103,52 @@ public class Game {
     }
 
     private void init() throws Exception {
-        // Coordinates for stuff:
-        float[] positions = new float[] {
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
 
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
-
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
-
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,
-        };
-
-        float[] colors = new float[] {
-                0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
-                0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
-        };
-
-        int[] indices = new int[] {
-                // Front face
-                0, 1, 3, 3, 1, 2,
-                // Top Face
-                8, 10, 11, 9, 8, 11,
-                // Right face
-                12, 13, 7, 5, 12, 7,
-                // Left face
-                6, 14, 4, 6, 15, 14,
-                // Bottom face
-                19, 16, 17, 19, 18, 16,
-                // Back face
-                7, 4, 5, 7, 6, 4
-        };
-
-        float[] texture_coords = new float[] {
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,
-        };
-
+        // Window Stuff:
         window.init();
-        keyboard = new KeyboardInput(window);
-        mouse = new MouseInput(window);
 
-        // create the needed mesh and add it to the mix
-        Mesh mesh = new Mesh();
-        mesh.init(positions, colors, texture_coords, indices);
-        RawModel model = new RawModel(mesh);
+        // GUI initialization:
+        ImGui.createContext();
+        ImGuiIO io = ImGui.getIO();
+        int[] windowWidth = new int[1], windowHeight = new int[1];
+        glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
+        int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
+        glfwGetFramebufferSize(window.getWindow(), framebufferWidth, framebufferHeight);
+        float scaleX = (float) framebufferWidth[0] / (float) windowWidth[0];
+        float scaleY = (float) framebufferHeight[0] / (float) windowHeight[0];
+        io.setDisplaySize(windowWidth[0], windowHeight[0]);
+        io.setDisplayFramebufferScale(scaleX, scaleY);
+        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
+        // Map ImGui keys
+        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
+        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
+        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
+        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
+        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
+        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
+        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
+        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
+        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
+        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
+        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
+        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
+        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
+        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
+        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
+        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
+        io.setKeyMap(ImGuiKey.A, GLFW_KEY_A);
+        io.setKeyMap(ImGuiKey.C, GLFW_KEY_C);
+        io.setKeyMap(ImGuiKey.V, GLFW_KEY_V);
+        io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
+        io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
+        io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
+        gui.init("#version 330");
 
-        // Create new entity, then add the model to the entity:
-        test0 = new Entity("test0");
-        test0.addModel(model);
-        position_entity(test0, -2.0f, 0.0f, 0.0f);
+        // Create models and scenes:
+        create_models_and_scenes();
 
-        test1 = new Entity("test1");
-        test1.addModel(model);
-        position_entity(test1, 0.0f, 0.0f, 0.0f);
-
-        test2 = new Entity("test2");
-        test2.addModel(model);
-        position_entity(test2, 2.0f, 0.0f, 0.0f);
-        // add entity to the scene
-        scene.add_entity(test0);
-        scene.add_entity(test1);
-        scene.add_entity(test2);
-        // Set camera position:
-        scene.get_camera().setPosition(0.0f, 0.0f, 5.0f);
+        // Input controls:
+        create_input_controls();
 
         // initialize the renderer:
         renderer.init();
@@ -298,6 +213,15 @@ public class Game {
     // Updating any data that needs it:
     private void update() {
         window.update();
+
+        // ImGui stuff -- start
+        ImGui.newFrame();
+        ImGui.showDemoWindow();
+        ImGui.render();
+        gui.renderDrawData(ImGui.getDrawData());
+        ;
+        // ImGui stuff -- end
+
         rotation += 1.5f;
         if (rotation >= 360) {
             rotation = 0;
@@ -375,6 +299,38 @@ public class Game {
      * These are the miscellaneous methods for the game:
      */
 
+    // Create input controls for keyboard and mouse:
+    private void create_input_controls() {
+        keyboard = new KeyboardInput(window);
+        mouse = new MouseInput(window);
+    }
+
+    // Create Models and scenes:
+    private void create_models_and_scenes() {
+        // Create a model:
+        RawModel model = new CubeModel().create_model();
+
+        // Create new entity, then add the model to the entity ... after add entity to
+        // scene:
+        test0 = new Entity("test0");
+        test0.addModel(model);
+        position_entity(test0, -2.0f, 0.0f, 0.0f);
+        scene.add_entity(test0);
+
+        test1 = new Entity("test1");
+        test1.addModel(model);
+        position_entity(test1, 0.0f, 0.0f, 0.0f);
+        scene.add_entity(test1);
+
+        test2 = new Entity("test2");
+        test2.addModel(model);
+        position_entity(test2, 2.0f, 0.0f, 0.0f);
+        scene.add_entity(test2);
+
+        // Set camera position:
+        scene.get_camera().setPosition(0.0f, 0.0f, 5.0f);
+    }
+
     // Screen resize:
     private void resize() {
         width = window.getWidth();
@@ -407,5 +363,4 @@ public class Game {
             System.out.println("DEBUGGING ENTITY ROTATION: " + entity.getId() + "\n" + entity.getModelMatrix());
         }
     }
-
 }
