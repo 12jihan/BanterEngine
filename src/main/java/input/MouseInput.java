@@ -1,18 +1,15 @@
 package input;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFWCursorEnterCallback;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
+import org.lwjgl.glfw.*;
 
-import imgui.ImGuiIO;
+import imgui.*;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiKey;
+import imgui.gl3.ImGuiImplGl3;
+
 import io.Window;
 
 public class MouseInput {
@@ -29,14 +26,15 @@ public class MouseInput {
     private final GLFWCursorPosCallback cursorPosCallback;
     private final GLFWScrollCallback scrollCallback;
     private final GLFWCursorEnterCallback cursorEnterCallback;
-    private final ImGuiIO io;
+    // private final ImGuiIO io;
 
-    public MouseInput(Window window, ImGuiIO io) {
+    public MouseInput(Window window) {
         this.window = window;
         this.window_context = this.window.getWindow();
         this.entered = false;
-        this.io = io;
+        // this.io = io;
         // Mouse button callback:
+        ImGuiIO io = ImGui.getIO();
         mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
@@ -52,12 +50,15 @@ public class MouseInput {
 
         // Cursor position callback:
         cursorPosCallback = new GLFWCursorPosCallback() {
+            ImGuiIO io = ImGui.getIO();
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 lastX = xPos;
                 lastY = yPos;
                 xPos = xpos;
                 yPos = ypos;
+
+                io.setMousePos((float) xpos, (float) yPos);
             }
         };
 

@@ -43,7 +43,6 @@ public class Game {
 
     // GUI things:
     private ImGuiImplGl3 gui;
-    private ImGuiIO io;
 
     // Inputs:
     private MouseInput mouse;
@@ -83,11 +82,11 @@ public class Game {
                     wired();
                     return null;
                 });
+        gui = new ImGuiImplGl3();
         targetFps = 60;
         targetUps = 60;
         scene = new Scene(window);
         renderer = new Renderer(scene);
-        gui = new ImGuiImplGl3();
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -108,43 +107,8 @@ public class Game {
         // Window Stuff:
         window.init();
 
-        // GUI initialization:
-        ImGui.createContext();
-        io = ImGui.getIO();
-        int[] windowWidth = new int[1], windowHeight = new int[1];
-        glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
-        int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
-        glfwGetFramebufferSize(window.getWindow(), framebufferWidth, framebufferHeight);
-        float scaleX = (float) framebufferWidth[0] / (float) windowWidth[0];
-        float scaleY = (float) framebufferHeight[0] / (float) windowHeight[0];
-        io.setDisplaySize(windowWidth[0], windowHeight[0]);
-        io.setDisplayFramebufferScale(scaleX, scaleY);
-        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
-        io.setConfigFlags(ImGuiConfigFlags.NoMouseCursorChange); // Allows ImGui to change the cursor
-        
-        // Map ImGui keys
-        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
-        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
-        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
-        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
-        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
-        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
-        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
-        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
-        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
-        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
-        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
-        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
-        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
-        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
-        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
-        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
-        io.setKeyMap(ImGuiKey.A, GLFW_KEY_A);
-        io.setKeyMap(ImGuiKey.C, GLFW_KEY_C);
-        io.setKeyMap(ImGuiKey.V, GLFW_KEY_V);
-        io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
-        io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
-        io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
+        // initialize imgui:
+        init_imgui();
 
         // Create models and scenes:
         create_models_and_scenes();
@@ -155,7 +119,7 @@ public class Game {
         // initialize the renderer:
         renderer.init();
         // Initialize the gui:
-        gui.init("#version 330");
+        
     }
 
     private void loop() {
@@ -190,15 +154,14 @@ public class Game {
                 updateTime = now;
                 deltaUpdate--;
             }
-
+            
             // Renders are updated:
             if (targetFps <= 0 || deltaFps >= 1) {
                 render();
                 deltaFps--;
-
+                
             }
             initialTime = now;
-            window.swap_buffers();
         }
         cleanup();
     }
@@ -216,16 +179,59 @@ public class Game {
         mouse_input(_window, camera, speed, diffTimeMillis);
     }
 
-    // Updating any data that needs it:
-    private void update() {
+    private void init_imgui() {
+        // ImGui initialization:
+        ImGui.createContext();
+        ImGuiIO io = ImGui.getIO();
+        
+        // Configuration for ImGui:
+        int[] windowWidth = new int[1], windowHeight = new int[1];
+        glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
+        int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
+        glfwGetFramebufferSize(window.getWindow(), framebufferWidth, framebufferHeight);
+        float scaleX = (float) framebufferWidth[0] / (float) windowWidth[0];
+        float scaleY = (float) framebufferHeight[0] / (float) windowHeight[0];
+        io.setDisplaySize(windowWidth[0], windowHeight[0]);
+        io.setDisplayFramebufferScale(scaleX, scaleY);
+        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
+        io.setConfigFlags(ImGuiConfigFlags.NoMouseCursorChange); // Allows ImGui to change the cursor
 
-        // ImGui stuff -- start
+        // Map ImGui keys
+        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
+        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
+        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
+        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
+        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
+        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
+        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
+        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
+        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
+        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
+        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
+        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
+        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
+        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
+        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
+        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
+        io.setKeyMap(ImGuiKey.A, GLFW_KEY_A);
+        io.setKeyMap(ImGuiKey.C, GLFW_KEY_C);
+        io.setKeyMap(ImGuiKey.V, GLFW_KEY_V);
+        io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
+        io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
+        io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
+        
+        // Initialize gui:
+        gui.init("#version 330");
+    }
+
+    private void render_imgui() {
         ImGui.newFrame();
         ImGui.showDemoWindow();
         ImGui.render();
         gui.renderDrawData(ImGui.getDrawData());
-        ;
-        // ImGui stuff -- end
+    }
+    // Updating any data that needs it:
+    private void update() {
 
         rotation += 1.5f;
         if (rotation >= 360) {
@@ -238,11 +244,15 @@ public class Game {
 
     private void render() {
         renderer.render();
+        render_imgui();
+        window.swap_buffers();
     }
 
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         renderer.cleanup();
+        gui.dispose();
+        ImGui.destroyContext();
         window.cleanup();
         mouse.cleanup();
         System.out.println("Banter Engine shutting down...");
@@ -307,7 +317,7 @@ public class Game {
     // Create input controls for keyboard and mouse:
     private void create_input_controls() {
         keyboard = new KeyboardInput(window);
-        mouse = new MouseInput(window, io);
+        mouse = new MouseInput(window);
     }
 
     // Create Models and scenes:

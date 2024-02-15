@@ -26,7 +26,7 @@ public class Window {
     private String title;
     private DisplaySettings win_opts;
     private Callable<Void> resizeFunc;
-    
+
     public Window(String title, DisplaySettings win_opts, Callable<Void> resizeFunc,
             Callable<Void> keyInputFunc) {
         this.title = title;
@@ -105,13 +105,6 @@ public class Window {
     }
 
     // updates logic for window manager:
-    public void poll_events() {
-        glfwPollEvents();
-    }
-    public void swap_buffers() {
-        glfwSwapBuffers(window);
-    }
-
     public void cleanup() {
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -171,8 +164,12 @@ public class Window {
      * Other specific settings for window:
      **/
 
-    public void pollEvents() {
+    public void poll_events() {
         glfwPollEvents();
+    }
+
+    public void swap_buffers() {
+        glfwSwapBuffers(window);
     }
 
     public boolean windowShouldClose() {
