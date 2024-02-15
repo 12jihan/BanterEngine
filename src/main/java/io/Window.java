@@ -105,9 +105,11 @@ public class Window {
     }
 
     // updates logic for window manager:
-    public void update() {
-        glfwSwapBuffers(window);
+    public void poll_events() {
         glfwPollEvents();
+    }
+    public void swap_buffers() {
+        glfwSwapBuffers(window);
     }
 
     public void cleanup() {

@@ -1,9 +1,6 @@
 package input;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
@@ -15,6 +12,7 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import imgui.ImGuiIO;
 import io.Window;
 
 public class MouseInput {
@@ -22,7 +20,7 @@ public class MouseInput {
     private long window_context;
 
     private double xPos, yPos, lastX, lastY, scrollX, scrollY;
-    private boolean leftButtonPressed, rightButtonPressed;
+    private boolean leftButtonPressed, rightButtonPressed, middleButtonPressed;
     private Vector2f displVec = new Vector2f();
     private boolean entered;
 
@@ -31,18 +29,24 @@ public class MouseInput {
     private final GLFWCursorPosCallback cursorPosCallback;
     private final GLFWScrollCallback scrollCallback;
     private final GLFWCursorEnterCallback cursorEnterCallback;
+    private final ImGuiIO io;
 
-    public MouseInput(Window window) {
+    public MouseInput(Window window, ImGuiIO io) {
         this.window = window;
         this.window_context = this.window.getWindow();
         this.entered = false;
-
+        this.io = io;
         // Mouse button callback:
         mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
                 leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
                 rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
+                middleButtonPressed = button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS;
+                
+                io.setMouseDown(0, leftButtonPressed);
+                io.setMouseDown(1, rightButtonPressed);
+                io.setMouseDown(2, middleButtonPressed);
             }
         };
 

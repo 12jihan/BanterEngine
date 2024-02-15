@@ -43,6 +43,7 @@ public class Game {
 
     // GUI things:
     private ImGuiImplGl3 gui;
+    private ImGuiIO io;
 
     // Inputs:
     private MouseInput mouse;
@@ -82,11 +83,12 @@ public class Game {
                     wired();
                     return null;
                 });
-        gui = new ImGuiImplGl3();
         targetFps = 60;
         targetUps = 60;
         scene = new Scene(window);
         renderer = new Renderer(scene);
+        gui = new ImGuiImplGl3();
+        io = ImGui.getIO();
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -119,6 +121,8 @@ public class Game {
         io.setDisplaySize(windowWidth[0], windowHeight[0]);
         io.setDisplayFramebufferScale(scaleX, scaleY);
         io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
+        io.setConfigFlags(ImGuiConfigFlags.NoMouseCursorChange); // Allows ImGui to change the cursor
+        
         // Map ImGui keys
         io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
         io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
@@ -142,7 +146,6 @@ public class Game {
         io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
         io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
         io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
-        gui.init("#version 330");
 
         // Create models and scenes:
         create_models_and_scenes();
@@ -152,6 +155,8 @@ public class Game {
 
         // initialize the renderer:
         renderer.init();
+        // Initialize the gui:
+        gui.init("#version 330");
     }
 
     private void loop() {
@@ -169,6 +174,7 @@ public class Game {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         while (!window.windowShouldClose() && running) {
+            window.poll_events();
             long now = System.currentTimeMillis();
             deltaUpdate += (now - initialTime) / timeU;
             deltaFps += (now - initialTime) / timeR;
@@ -193,6 +199,7 @@ public class Game {
 
             }
             initialTime = now;
+            window.swap_buffers();
         }
         cleanup();
     }
@@ -212,7 +219,6 @@ public class Game {
 
     // Updating any data that needs it:
     private void update() {
-        window.update();
 
         // ImGui stuff -- start
         ImGui.newFrame();
@@ -302,7 +308,7 @@ public class Game {
     // Create input controls for keyboard and mouse:
     private void create_input_controls() {
         keyboard = new KeyboardInput(window);
-        mouse = new MouseInput(window);
+        mouse = new MouseInput(window, io);
     }
 
     // Create Models and scenes:
