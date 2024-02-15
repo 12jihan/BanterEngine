@@ -88,7 +88,6 @@ public class Game {
         scene = new Scene(window);
         renderer = new Renderer(scene);
         gui = new ImGuiImplGl3();
-        io = ImGui.getIO();
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -111,7 +110,7 @@ public class Game {
 
         // GUI initialization:
         ImGui.createContext();
-        ImGuiIO io = ImGui.getIO();
+        io = ImGui.getIO();
         int[] windowWidth = new int[1], windowHeight = new int[1];
         glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
         int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
