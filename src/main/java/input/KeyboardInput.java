@@ -14,15 +14,15 @@ public class KeyboardInput {
 
     private GLFWKeyCallback keyCallback;
 
-
     public KeyboardInput(Window window) {
         this.window = window.getWindow();
-
         // keyboard callback method:
         keyCallback = new GLFWKeyCallback() {
             ImGuiIO io = ImGui.getIO();
+
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
+                System.out.println("testing:\t" + io.getMetricsActiveWindows());
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                     glfwSetWindowShouldClose(window, true);
                 }
