@@ -24,14 +24,16 @@ public class MouseInput {
     private final GLFWCursorPosCallback cursorPosCallback;
     private final GLFWScrollCallback scrollCallback;
     private final GLFWCursorEnterCallback cursorEnterCallback;
-    private boolean leftButtonPressed, rightButtonPressed, middleButtonPressed;
+    private boolean leftButtonPressed;
+    private boolean rightButtonPressed;
+    private boolean  midButtonPressed;
     // private final ImGuiIO io;
 
     public MouseInput(Window window) {
         this.window = window;
         this.window_context = this.window.getWindow();
         this.entered = false;
-        // this.io = io;
+
         // Mouse button callback:
         mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
@@ -49,7 +51,7 @@ public class MouseInput {
                 if (!io.getWantCaptureMouse()) {
                     leftButtonPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
                     rightButtonPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
-                    middleButtonPressed = button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS;
+                    midButtonPressed = button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS;
                 }
 
             }
@@ -92,6 +94,7 @@ public class MouseInput {
                 } else {
                     leftButtonPressed = false;
                     rightButtonPressed = false;
+                    midButtonPressed = false;
                 }
             }
         };
@@ -111,7 +114,8 @@ public class MouseInput {
         displVec.y = 0;
 
         if (lastX > 0 && lastY > 0) {
-
+            lastX = 0;
+            lastY = 0;
         }
     }
 

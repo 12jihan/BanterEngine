@@ -304,7 +304,6 @@ public class Game {
 
         if (mouse.isRightButtonPressed()) {
             System.out.println("Mouse right button pressed!");
-
         }
 
         mouse.update();
