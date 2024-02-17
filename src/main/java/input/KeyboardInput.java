@@ -18,20 +18,20 @@ public class KeyboardInput {
         this.window = window.getWindow();
         // keyboard callback method:
         keyCallback = new GLFWKeyCallback() {
-            ImGuiIO io = ImGui.getIO();
-
+            
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
+                ImGuiIO io = ImGui.getIO();
                 System.out.println("testing:\t" + io.getMetricsActiveWindows());
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                     glfwSetWindowShouldClose(window, true);
                 }
 
-                if (action == GLFW_PRESS) {
-                    io.setKeysDown(key, true);
-                } else if (action == GLFW_RELEASE) {
-                    io.setKeysDown(key, false);
-                }
+                // if (action == GLFW_PRESS) {
+                //     io.setKeysDown(key, true);
+                // } else if (action == GLFW_RELEASE) {
+                //     io.setKeysDown(key, false);
+                // }
             }
         };
 

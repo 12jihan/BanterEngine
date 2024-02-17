@@ -8,6 +8,7 @@ import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
 import imgui.gl3.ImGuiImplGl3;
 
+import java.util.ArrayList;
 import java.util.Timer;
 
 import org.joml.Vector2f;
@@ -34,8 +35,10 @@ import utils.TimeManager;
 public class Game {
     public static final int TARGET_FPS = 60;
     public static final int TARGET_UPS = 60;
-    private static final float MOUSE_SENSITIVITY = 0.10f;
-    private static final float MOVEMENT_SPEED = 0.05f;
+
+    private static float[] MOUSE_SENSITIVITY = { 0.20f };
+    private static float[] MOVEMENT_SPEED = { 0.05f };
+    private boolean[] enable_wireframe = new boolean[]{false};
 
     // Window things:
     private Window window;
@@ -107,11 +110,11 @@ public class Game {
         // Window Stuff:
         window.init();
 
-        // initialize imgui:
-        init_imgui();
-
         // Create models and scenes:
         create_models_and_scenes();
+
+        // initialize imgui:
+        init_imgui();
 
         // Input controls:
         create_input_controls();
@@ -119,7 +122,7 @@ public class Game {
         // initialize the renderer:
         renderer.init();
         // Initialize the gui:
-        
+
     }
 
     private void loop() {
@@ -154,12 +157,12 @@ public class Game {
                 updateTime = now;
                 deltaUpdate--;
             }
-            
+
             // Renders are updated:
             if (targetFps <= 0 || deltaFps >= 1) {
                 render();
                 deltaFps--;
-                
+
             }
             initialTime = now;
         }
@@ -171,7 +174,7 @@ public class Game {
         long _window = window.getWindow();
         Camera camera = scene.get_camera();
         // System.out.println("camera: " + camera.getPosition());
-        float speed = MOVEMENT_SPEED;
+        float speed = MOVEMENT_SPEED[0];
 
         // Keyboard input:
         keyboard_input(_window, camera, speed, diffTimeMillis);
@@ -183,7 +186,7 @@ public class Game {
         // ImGui initialization:
         ImGui.createContext();
         ImGuiIO io = ImGui.getIO();
-        
+
         // Configuration for ImGui:
         int[] windowWidth = new int[1], windowHeight = new int[1];
         glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
@@ -219,17 +222,49 @@ public class Game {
         io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
         io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
         io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
-        
+
         // Initialize gui:
         gui.init("#version 330");
     }
 
     private void render_imgui() {
         ImGui.newFrame();
-        ImGui.showDemoWindow();
+        if (ImGui.beginMainMenuBar()) {
+            if (ImGui.beginMenu("Examples")) {
+                ImGui.menuItem("null");
+                ImGui.menuItem("Console");
+                ImGui.menuItem("Log");
+                ImGui.menuItem("Simple layout");
+                ImGui.menuItem("Property editor");
+                ImGui.menuItem("Long text display");
+                ImGui.menuItem("Auto-resizing window");
+                ImGui.menuItem("Constrained-resizing window");
+                ImGui.menuItem("Simple overlay");
+                ImGui.menuItem("Manipulating window titles");
+                ImGui.menuItem("Custom rendering");
+                ImGui.menuItem("Documents");
+                ImGui.endMenu();
+            }
+            ImGui.endMainMenuBar();
+        }
+        ImGui.setNextWindowSize(482, window.getHeight());
+        ImGui.setNextWindowPos(0, 18);
+        ImGui.begin("Banter Engine Settings");
+        show_ui();
+        ImGui.end();
         ImGui.render();
         gui.renderDrawData(ImGui.getDrawData());
     }
+
+    private void show_ui() {
+        if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
+            enable_wireframe[0] = !enable_wireframe[0];
+        };
+        ImGui.sliderFloat("Mouse Sensitivity", MOUSE_SENSITIVITY, 0.0f, 1.0f);
+        ImGui.sliderFloat("Movement Speed", MOVEMENT_SPEED, 0.0f, 1.0f);
+
+    }
+
     // Updating any data that needs it:
     private void update() {
 
@@ -243,7 +278,11 @@ public class Game {
     }
 
     private void render() {
+        if (enable_wireframe[0])
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // glColor3f(1.0f, 1.0f, 1.0f);
         renderer.render();
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         render_imgui();
         window.swap_buffers();
     }
@@ -253,8 +292,8 @@ public class Game {
         renderer.cleanup();
         gui.dispose();
         ImGui.destroyContext();
-        window.cleanup();
         mouse.cleanup();
+        window.cleanup();
         System.out.println("Banter Engine shutting down...");
     }
 
@@ -288,6 +327,9 @@ public class Game {
         if (keyboard.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
             camera.moveDown(_speed);
         }
+        if (keyboard.isKeyPressed(GLFW_KEY_COMMA)) {
+            wired();
+        }
     }
 
     public void mouse_input(long window, Camera camera, float speed, long diffTimeMillis) {
@@ -295,8 +337,8 @@ public class Game {
         double deltaX = mouse.getX() - mouse.getLastX();
         double deltaY = mouse.getY() - mouse.getLastY();
         // double deltaY = mouse.getLastY() - mouse.getY();
-        float rotationX = (float) Math.toRadians(deltaY * MOUSE_SENSITIVITY); // Pitch
-        float rotationY = (float) Math.toRadians(deltaX * MOUSE_SENSITIVITY); // Yaw
+        float rotationX = (float) Math.toRadians(deltaY * MOUSE_SENSITIVITY[0]); // Pitch
+        float rotationY = (float) Math.toRadians(deltaX * MOUSE_SENSITIVITY[0]); // Yaw
 
         if (mouse.isLeftButtonPressed()) {
             camera.addRotation(rotationX, rotationY);
@@ -305,8 +347,11 @@ public class Game {
         if (mouse.isRightButtonPressed()) {
             System.out.println("Mouse right button pressed!");
         }
-
+        System.out.println("mouse sensitivity:\t" + MOUSE_SENSITIVITY[0]);
+        System.out.println("deltaX:\t" + deltaX + "deltaY:\t" + deltaY);
         mouse.update();
+        deltaX = 0;
+        deltaY = 0;
     }
 
     /**

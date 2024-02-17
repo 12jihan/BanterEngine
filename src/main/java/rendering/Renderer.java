@@ -24,11 +24,12 @@ public class Renderer {
         glClearColor(0.1f, 0.1f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Use this to render in wireframe mode:
-        if (wired) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
+        // if (false) {
+        //     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //     glDisable(GL_TEXTURE_2D);
+        // } else {
+        //     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        // }
 
         scene.render();
         // Maybe this should be use instead but i'm not sure yet:

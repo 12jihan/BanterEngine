@@ -114,8 +114,8 @@ public class MouseInput {
         displVec.y = 0;
 
         if (lastX > 0 && lastY > 0) {
-            lastX = 0;
-            lastY = 0;
+            lastX = xPos;
+            lastY = yPos;
         }
     }
 
