@@ -248,7 +248,7 @@ public class Game {
             ImGui.endMainMenuBar();
         }
         ImGui.setNextWindowSize(482, window.getHeight());
-        ImGui.setNextWindowPos(0, 18);
+        ImGui.setNextWindowPos(0, 20);
         ImGui.begin("Banter Engine Settings");
         show_ui();
         ImGui.end();
