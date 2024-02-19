@@ -20,6 +20,25 @@ public class Mesh {
     private int indexCount;
     private List<Integer> vboList = new ArrayList<>();
 
+    public void init(float[] positions, float[] normals) {
+            vao_id = glGenVertexArrays();
+    
+            vertexCount = positions.length / 3;
+            glBindVertexArray(vao_id);
+            // Create that VBO:
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                // positions (location = 0):
+                VBO loc0 = new VBO("positions", 0, 3, positions);
+                vboList.add(loc0.getVboId());
+    
+                // normals (location = 1):
+                VBO loc1 = new VBO("normals", 1, 3, normals);
+                vboList.add(loc1.getVboId());
+            }
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
+    }
+
     public void init(float[] positions, float[] colors, float[] texture_coords, int[] indices) {
         // public void init(float[] positions, float[] colors, int[] indices) {
         vao_id = glGenVertexArrays();
@@ -50,6 +69,10 @@ public class Mesh {
             // texture_coords (location = 2):
             VBO loc2 = new VBO("texture_coords", 2, 2, texture_coords);
             vboList.add(loc2.getVboId());
+
+            // normals (location = 3):
+            // VBO loc3 = new VBO("normals", 3, 3, normals);
+            // vboList.add(loc3.getVboId());
 
             // EBO for indices:
             EBO ebo = new EBO("indices", indices);

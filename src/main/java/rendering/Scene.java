@@ -24,33 +24,36 @@ import models.entity.Entity;
 import models.entity.RawModel;
 import models.mesh.Mesh;
 import models.texture.Texture;
+import rendering.lights.SceneLights;
 import utils.Projection;
 import utils.UniformsMap;
 
 @SuppressWarnings("unused")
 public class Scene {
-    private UniformsMap uniformsMap;
     private static Shader main_shader;
-    private static Mesh mesh1;
-    private static Mesh mesh2;
     private static Texture texture;
-    int width, height;
-    int[] indices;
+    private static SceneLights lights;
+    private static Camera camera;
+    private static Projection projection;
+    
+    private UniformsMap uniformsMap;
+    
+    private int width, height;
+    private int[] indices;
+    
+    private Matrix4f model_matrix;
+    private Matrix4f view_matrix;
+    private Matrix4f projection_matrix;
 
     // for testing purposes only:
     private static final float FOV = (float) Math.toRadians(180.0f);
     private static final float Z_FAR = 1000.0f;
     private static final float Z_NEAR = 0.01f;
 
-    private static Camera camera;
-    private static Projection projection;
 
-    private Matrix4f model_matrix;
-    private Matrix4f view_matrix;
-    private Matrix4f projection_matrix;
 
     // Model map:
-    List<Entity> entities = new ArrayList<Entity>();
+    private List<Entity> entities = new ArrayList<Entity>();
 
     Window window;
     private static float scale;
@@ -88,7 +91,7 @@ public class Scene {
 
         // mesh.init(positions, colors, indices);
         // setup texture:
-        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/brickwall.png", main_shader_id);
+        texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/hexagon-pavers/hexagon-pavers1_albedo.png", main_shader_id);
         // Activate the shader to set the uniform
         // shader.use();
 
@@ -98,7 +101,7 @@ public class Scene {
         uniformsMap.createUniform("view_matrix");
         uniformsMap.createUniform("model_matrix");
         uniformsMap.createUniform("projection_matrix");
-        // glEnable(GL_Cul)
+        // glEnable(GL_Cull)
     };
 
     public void render() {
@@ -111,8 +114,6 @@ public class Scene {
         texture.bind(0);
 
         for (Entity entity : entities) {
-            // Setting default values:
-
             // matrices and uniforms:
             projection.updateProjMatrix(window.getWidth(), window.getHeight());
             uniformsMap.setUniform("model_matrix", entity.getTransformationMatrix());
@@ -125,7 +126,7 @@ public class Scene {
         // bind textures slot:
 
         // Use the shader program
-        // shader.use();
+        // main_shader.use();
 
         // completely optional to unbind the vao:
         texture.unbind();
@@ -154,6 +155,10 @@ public class Scene {
     public void add_entity(Entity entity) {
         entities.add(entity);
         System.out.println("Entity added: " + entity.getId());
+    }
+
+    public List<Entity> get_entities() {
+        return entities;
     }
 
     /**

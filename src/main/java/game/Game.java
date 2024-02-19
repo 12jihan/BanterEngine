@@ -7,8 +7,11 @@ import imgui.*;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
 import imgui.gl3.ImGuiImplGl3;
+import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 import org.joml.Vector2f;
@@ -19,6 +22,7 @@ import input.MouseInput;
 import io.DisplaySettings;
 import io.Window;
 import models.CubeModel;
+import models.LightCubeModel;
 import models.entity.AssimpModelLoader;
 import models.entity.Entity;
 import models.entity.RawModel;
@@ -38,7 +42,7 @@ public class Game {
 
     private static float[] MOUSE_SENSITIVITY = { 0.20f };
     private static float[] MOVEMENT_SPEED = { 0.05f };
-    private boolean[] enable_wireframe = new boolean[]{false};
+    private boolean[] enable_wireframe = new boolean[] { false };
 
     // Window things:
     private Window window;
@@ -59,6 +63,7 @@ public class Game {
     private Entity test0;
     private Entity test1;
     private Entity test2;
+    private Entity light_cube;
 
     // Scene/Renderer:
     private Scene scene;
@@ -71,6 +76,7 @@ public class Game {
     private int height;
     private boolean running = false;
     float rotation = 0.0f;
+    ImInt entity_pos = new ImInt(0);
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
@@ -173,7 +179,6 @@ public class Game {
     private void input(Window window, Scene scene, long diffTimeMillis) {
         long _window = window.getWindow();
         Camera camera = scene.get_camera();
-        // System.out.println("camera: " + camera.getPosition());
         float speed = MOVEMENT_SPEED[0];
 
         // Keyboard input:
@@ -257,11 +262,45 @@ public class Game {
     }
 
     private void show_ui() {
-        if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
-            enable_wireframe[0] = !enable_wireframe[0];
-        };
-        ImGui.sliderFloat("Mouse Sensitivity", MOUSE_SENSITIVITY, 0.0f, 1.0f);
-        ImGui.sliderFloat("Movement Speed", MOVEMENT_SPEED, 0.0f, 1.0f);
+        if (ImGui.collapsingHeader("null")) {
+            if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
+                enable_wireframe[0] = !enable_wireframe[0];
+            }
+            ImGui.sliderFloat("Mouse Sensitivity", MOUSE_SENSITIVITY, 0.0f, 1.0f);
+            ImGui.sliderFloat("Movement Speed", MOVEMENT_SPEED, 0.0f, 1.0f);
+        }
+
+        if (ImGui.collapsingHeader("Entities: " + scene.get_entities().size())) {
+            // TODO figure out the list boxes shit:
+            // List<Entity> entities = scene.get_entities();
+            // String[] names = new String[entities.size()];
+            // for (int i = 0; i < entities.size(); i++) {
+            // names[i] = entities.get(i).getId();
+            // }
+            // ImInt current_entity = new ImInt(0);
+            // ImGui.listBox("null", entity_pos, names, names.length);
+            // ImGui.listBox("Entities", current_entity, entities);
+
+            for (Entity entity : scene.get_entities()) {
+                if (ImGui.treeNode(entity.getId())) {
+                    ImGui.text("Position:");
+                    ImGui.labelText(String.valueOf(entity.getPosition().x), "X:");
+                    ImGui.labelText(String.valueOf(entity.getPosition().y), "Y:");
+                    ImGui.labelText(String.valueOf(entity.getPosition().z), "Z:");
+                    ImGui.separator();
+                    ImGui.text("Rotation:");
+                    ImGui.labelText(String.valueOf(entity.getRotation().x), "X:");
+                    ImGui.labelText(String.valueOf(entity.getRotation().y), "Y:");
+                    ImGui.labelText(String.valueOf(entity.getRotation().z), "Z:");
+                    ImGui.separator();
+                    ImGui.text("Scale:");
+                    ImGui.labelText(String.valueOf(entity.getScale()), "size:");
+                    ImGui.separator();
+                    ImGui.treePop();
+                }
+            }
+        }
+        ImGui.showDemoWindow();
 
     }
 
@@ -347,8 +386,6 @@ public class Game {
         if (mouse.isRightButtonPressed()) {
             System.out.println("Mouse right button pressed!");
         }
-        System.out.println("mouse sensitivity:\t" + MOUSE_SENSITIVITY[0]);
-        System.out.println("deltaX:\t" + deltaX + "deltaY:\t" + deltaY);
         mouse.update();
         deltaX = 0;
         deltaY = 0;
@@ -368,9 +405,15 @@ public class Game {
     private void create_models_and_scenes() {
         // Create a model:
         RawModel model = new CubeModel().create_model();
+        RawModel light_cube_model = new LightCubeModel().create_model();
 
         // Create new entity, then add the model to the entity ... after add entity to
         // scene:
+        light_cube = new Entity("light_cube");
+        light_cube.addModel(light_cube_model);
+        position_entity(light_cube, 0.0f, 3.0f, 0.0f);
+        scene.add_entity(light_cube);
+
         test0 = new Entity("test0");
         test0.addModel(model);
         position_entity(test0, -2.0f, 0.0f, 0.0f);
@@ -398,7 +441,6 @@ public class Game {
 
     // Wireframe mode: TODO - Fix this method.
     public void wired() {
-        System.out.println("Wireframe mode toggled!");
         renderer.wired();
     }
 
