@@ -39,7 +39,6 @@ public class VBO {
 
     private void create() {
         vboId = glGenBuffers();
-        System.out.println("| VBO " + descriptor + ":\t" + vboId + " |");
     }
     private void bind() {
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
