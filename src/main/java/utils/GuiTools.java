@@ -2,6 +2,11 @@ package utils;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.joml.Vector3f;
+
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
@@ -21,7 +26,9 @@ public class GuiTools {
     private static float[] MOUSE_SENSITIVITY = { 0.20f };
     private static float[] MOVEMENT_SPEED = { 0.05f };
     private boolean[] enable_wireframe = new boolean[] { false };
-    
+    private Map<String, Entity> entity_map = new HashMap<>();
+    float[] entity_pos = new float[3];
+
     public void init(Window window, Scene scene) {
         this.scene = scene;
         this.window_class = window;
@@ -40,7 +47,7 @@ public class GuiTools {
         ImGui.newFrame();
         ImGui.begin("Banter Engine Settings");
         main_menu_bar();
-        show_ui();
+        entity_ui();
         show_demo();
         ImGui.end();
         ImGui.render();
@@ -70,7 +77,7 @@ public class GuiTools {
         ImGui.setNextWindowPos(0, 20);
     }
 
-    private void show_ui() {
+    private void entity_ui() {
         if (ImGui.collapsingHeader("null")) {
             if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
                 enable_wireframe[0] = !enable_wireframe[0];
@@ -89,13 +96,22 @@ public class GuiTools {
             // ImInt current_entity = new ImInt(0);
             // ImGui.listBox("null", entity_pos, names, names.length);
             // ImGui.listBox("Entities", current_entity, entities);
-
             for (Entity entity : scene.get_entities()) {
+                // Add to entity for use:
+                entity_map.put(entity.getId(), entity);
+
+                // ImGui interface for each entity:
                 if (ImGui.treeNode(entity.getId())) {
                     ImGui.text("Position:");
-                    ImGui.labelText(String.valueOf(entity.getPosition().x), "X:");
-                    ImGui.labelText(String.valueOf(entity.getPosition().y), "Y:");
-                    ImGui.labelText(String.valueOf(entity.getPosition().z), "Z:");
+                    entity_map.get(entity.getId());
+
+                    Vector3f position = new Vector3f(entity_pos[0], entity_pos[1], entity_pos[2]);
+                    entity.setPosition(position.x, position.y, position.z);
+
+                    ImGui.labelText(String.valueOf(position.x), "X:");
+                    ImGui.labelText(String.valueOf(position.y), "Y:");
+                    ImGui.labelText(String.valueOf(position.z), "Z:");
+                    ImGui.dragFloat3("Position Change", entity_pos, 0.00f, -20.00f, 20.00f, "%0.01f");
                     ImGui.separator();
                     ImGui.text("Rotation:");
                     ImGui.labelText(String.valueOf(entity.getRotation().x), "X:");
@@ -123,10 +139,10 @@ public class GuiTools {
 
         int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
         glfwGetFramebufferSize(window_class.getWindow(), framebufferWidth, framebufferHeight);
-        
+
         float scaleX = (float) framebufferWidth[0] / (float) window_width[0];
         float scaleY = (float) framebufferHeight[0] / (float) window_height[0];
-        
+
         io.setDisplaySize(window_width[0], window_height[0]);
         io.setDisplayFramebufferScale(scaleX, scaleY);
 

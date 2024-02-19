@@ -85,11 +85,6 @@ public class Scene {
         view_matrix = camera.getViewMatrix();
         projection_matrix = projection.getProjMatrix();
 
-        // TODO: Camera control needs to be moved into an actual input handler device.
-        // view_matrix.translate(new Vector3f(0.0f, 0.0f, -5.0f));
-        // view_matrix.rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
-
-        // mesh.init(positions, colors, indices);
         // setup texture:
         texture = new Texture("/Users/jareemhoff/dev/java/banter/res/textures/hexagon-pavers/hexagon-pavers1_albedo.png", main_shader_id);
         // Activate the shader to set the uniform

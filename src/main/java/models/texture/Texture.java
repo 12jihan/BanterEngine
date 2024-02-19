@@ -31,7 +31,6 @@ public class Texture {
 
     public void init(String texturePath) {
         this.texturePath = texturePath;
-        System.out.println("Texture path:\t" + texturePath);
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer channels = BufferUtils.createIntBuffer(1);
@@ -52,8 +51,6 @@ public class Texture {
 
     private void generateTexture(int width, int height, ByteBuffer image) {
         this.textureId = glGenTextures();
-        System.out.println("Texture ID:\t" + this.textureId);
-        System.out.println("Texture size:\t" + width + " x " + height + " px\n" );
         glBindTexture(GL_TEXTURE_2D, this.textureId);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
