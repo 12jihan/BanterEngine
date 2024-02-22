@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import imgui.ImGui;
@@ -14,6 +15,7 @@ import imgui.flag.ImGuiKey;
 import imgui.gl3.ImGuiImplGl3;
 import io.Window;
 import models.entity.Entity;
+import models.entity.Entity_Obj;
 import rendering.Scene;
 
 public class GuiTools {
@@ -26,8 +28,7 @@ public class GuiTools {
     private static float[] MOUSE_SENSITIVITY = { 0.20f };
     private static float[] MOVEMENT_SPEED = { 0.05f };
     private boolean[] enable_wireframe = new boolean[] { false };
-    private Map<String, Entity> entity_map = new HashMap<>();
-    float[] entity_pos = new float[3];
+    private Map<String, float[][]> entity_map = new HashMap<String, float[][]>();
 
     public void init(Window window, Scene scene) {
         this.scene = scene;
@@ -78,49 +79,71 @@ public class GuiTools {
     }
 
     private void entity_ui() {
-        if (ImGui.collapsingHeader("null")) {
-            if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
-                enable_wireframe[0] = !enable_wireframe[0];
-            }
-            ImGui.sliderFloat("Mouse Sensitivity", MOUSE_SENSITIVITY, 0.0f, 1.0f);
-            ImGui.sliderFloat("Movement Speed", MOVEMENT_SPEED, 0.0f, 1.0f);
-        }
-
         if (ImGui.collapsingHeader("Entities: " + scene.get_entities().size())) {
-            // TODO figure out the list boxes shit:
-            // List<Entity> entities = scene.get_entities();
-            // String[] names = new String[entities.size()];
-            // for (int i = 0; i < entities.size(); i++) {
-            // names[i] = entities.get(i).getId();
-            // }
-            // ImInt current_entity = new ImInt(0);
-            // ImGui.listBox("null", entity_pos, names, names.length);
-            // ImGui.listBox("Entities", current_entity, entities);
             for (Entity entity : scene.get_entities()) {
-                // Add to entity for use:
-                entity_map.put(entity.getId(), entity);
 
-                // ImGui interface for each entity:
+                Entity_Obj sudo_entity = new Entity_Obj(entity);
+                Vector3f entity_position = entity.getPosition();
+                Quaternionf entity_rotation = entity.getRotation();
+                float entity_scale = entity.getScale();
+
+                // If key already exists skip it:
+                if (!entity_map.containsKey(entity.getId())) {
+                    // Special Object created for the data that I need;
+                    entity_map.put(entity.getId(), new float[][] { sudo_entity.get_position(),
+                            sudo_entity.get_rotation(), sudo_entity.getScale() });
+                }
+
+                // Each entity's data:
                 if (ImGui.treeNode(entity.getId())) {
-                    ImGui.text("Position:");
-                    entity_map.get(entity.getId());
+                    // Entity Position:
+                    if (ImGui.treeNode("Position")) {
+                        ImGui.labelText("X:", String.valueOf(entity_position.x));
+                        ImGui.labelText("Y:", String.valueOf(entity_position.y));
+                        ImGui.labelText("Z:", String.valueOf(entity_position.z));
 
-                    Vector3f position = new Vector3f(entity_pos[0], entity_pos[1], entity_pos[2]);
-                    entity.setPosition(position.x, position.y, position.z);
+                        if (ImGui.dragFloat3("Position Change", entity_map.get(entity.getId())[0],
+                                0.001f,
+                                -20.00f,
+                                20.00f,
+                                "%0.02f")) {
+                                    System.out.println(entity_map.get(entity.getId())[2][0]);
+                            entity.setPosition(
+                                    entity_map.get(entity.getId())[0][0],
+                                    entity_map.get(entity.getId())[0][1],
+                                    entity_map.get(entity.getId())[0][2]);
+                            entity.updateModelMatrix();
+                        }
 
-                    ImGui.labelText(String.valueOf(position.x), "X:");
-                    ImGui.labelText(String.valueOf(position.y), "Y:");
-                    ImGui.labelText(String.valueOf(position.z), "Z:");
-                    ImGui.dragFloat3("Position Change", entity_pos, 0.00f, -20.00f, 20.00f, "%0.01f");
-                    ImGui.separator();
-                    ImGui.text("Rotation:");
-                    ImGui.labelText(String.valueOf(entity.getRotation().x), "X:");
-                    ImGui.labelText(String.valueOf(entity.getRotation().y), "Y:");
-                    ImGui.labelText(String.valueOf(entity.getRotation().z), "Z:");
-                    ImGui.separator();
-                    ImGui.text("Scale:");
-                    ImGui.labelText(String.valueOf(entity.getScale()), "size:");
-                    ImGui.separator();
+                        if (ImGui.dragFloat3("Rotation Change", entity_map.get(entity.getId())[0],
+                                0.001f,
+                                -20.00f,
+                                20.00f,
+                                "%0.02f")) {
+                                    System.out.println(entity_map.get(entity.getId())[2][0]);
+                            entity.setPosition(
+                                    entity_map.get(entity.getId())[0][0],
+                                    entity_map.get(entity.getId())[0][1],
+                                    entity_map.get(entity.getId())[0][2]);
+                            entity.updateModelMatrix();
+                        }
+                        ImGui.treePop();
+                    }
+
+                    // Entity Rotation:
+                    if (ImGui.treeNode("Rotation")) {
+                        ImGui.labelText("X:", String.valueOf(entity.getRotation().x));
+                        ImGui.labelText("Y:", String.valueOf(entity.getRotation().y));
+                        ImGui.labelText("Z:", String.valueOf(entity.getRotation().z));
+                        ImGui.treePop();
+                    }
+
+                    // Entity Scale:
+                    if (ImGui.treeNode("Scale")) {
+                        ImGui.labelText("size:", String.valueOf(entity.getScale()));
+                        ImGui.treePop();
+                    }
+
                     ImGui.treePop();
                 }
             }
