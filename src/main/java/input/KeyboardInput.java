@@ -22,7 +22,6 @@ public class KeyboardInput {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 ImGuiIO io = ImGui.getIO();
-                System.out.println("testing:\t" + io.getMetricsActiveWindows());
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                     glfwSetWindowShouldClose(window, true);
                 }
