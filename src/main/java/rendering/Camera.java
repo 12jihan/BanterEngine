@@ -45,8 +45,6 @@ public class Camera {
     }
 
     public void moveForward(float inc) {
-        System.out.println("inc: " + inc);
-        System.out.println("matrix: " + viewMatrix);
         viewMatrix.positiveZ(direction).negate().mul(inc);
         position.add(direction);
         recalculate();

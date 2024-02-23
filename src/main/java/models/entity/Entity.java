@@ -17,6 +17,7 @@ public class Entity {
     // positioning in the world
     private Vector3f position;
     private Quaternionf rotation;
+    private float angle;
     private float scale;
 
     RawModel model;
@@ -28,6 +29,7 @@ public class Entity {
         position = new Vector3f();
         rotation = new Quaternionf();
         model_matrix = new Matrix4f();
+        angle = 0.0f;
         scale = 1;
     }
 
@@ -58,7 +60,8 @@ public class Entity {
     }
 
     public void setRotation(float x, float y, float z, float angle) {
-        this.rotation.fromAxisAngleRad(x, y, z, angle);
+        this.angle = angle;
+        this.rotation.fromAxisAngleRad(x, y, z, this.angle);
     }
 
     public float getScale() {
@@ -67,6 +70,10 @@ public class Entity {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public float getAngle() {
+        return angle;
     }
 
     public void addModel(RawModel model) {

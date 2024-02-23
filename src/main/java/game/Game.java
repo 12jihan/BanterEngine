@@ -7,8 +7,11 @@ import imgui.*;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
 import imgui.gl3.ImGuiImplGl3;
+import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 import org.joml.Vector2f;
@@ -19,6 +22,7 @@ import input.MouseInput;
 import io.DisplaySettings;
 import io.Window;
 import models.CubeModel;
+import models.LightCubeModel;
 import models.entity.AssimpModelLoader;
 import models.entity.Entity;
 import models.entity.RawModel;
@@ -29,6 +33,7 @@ import rendering.Renderer;
 import rendering.Scene;
 import rendering.Shader;
 import utils.GameClock;
+import utils.GuiTools;
 import utils.TimeManager;
 
 @SuppressWarnings("unused")
@@ -38,14 +43,15 @@ public class Game {
 
     private static float[] MOUSE_SENSITIVITY = { 0.20f };
     private static float[] MOVEMENT_SPEED = { 0.05f };
-    private boolean[] enable_wireframe = new boolean[]{false};
+    private boolean[] enable_wireframe = new boolean[] { false };
 
     // Window things:
     private Window window;
     private DisplaySettings win_opts;
 
     // GUI things:
-    private ImGuiImplGl3 gui;
+    // private ImGuiImplGl3 gui;
+    private GuiTools gui_tools;
 
     // Inputs:
     private MouseInput mouse;
@@ -59,6 +65,7 @@ public class Game {
     private Entity test0;
     private Entity test1;
     private Entity test2;
+    private Entity light_cube;
 
     // Scene/Renderer:
     private Scene scene;
@@ -71,6 +78,7 @@ public class Game {
     private int height;
     private boolean running = false;
     float rotation = 0.0f;
+    ImInt entity_pos = new ImInt(0);
 
     Game() throws Exception {
         win_opts = new DisplaySettings();
@@ -85,11 +93,12 @@ public class Game {
                     wired();
                     return null;
                 });
-        gui = new ImGuiImplGl3();
+        // gui = new ImGuiImplGl3();
         targetFps = 60;
         targetUps = 60;
         scene = new Scene(window);
         renderer = new Renderer(scene);
+        gui_tools = new GuiTools();
 
         // model_loader = new AssimpModelLoader();
         // model_loader.load_model("test-1",
@@ -114,7 +123,8 @@ public class Game {
         create_models_and_scenes();
 
         // initialize imgui:
-        init_imgui();
+        // init_imgui();
+        gui_tools.init(this.window, this.scene);
 
         // Input controls:
         create_input_controls();
@@ -173,7 +183,6 @@ public class Game {
     private void input(Window window, Scene scene, long diffTimeMillis) {
         long _window = window.getWindow();
         Camera camera = scene.get_camera();
-        // System.out.println("camera: " + camera.getPosition());
         float speed = MOVEMENT_SPEED[0];
 
         // Keyboard input:
@@ -182,99 +191,17 @@ public class Game {
         mouse_input(_window, camera, speed, diffTimeMillis);
     }
 
-    private void init_imgui() {
-        // ImGui initialization:
-        ImGui.createContext();
-        ImGuiIO io = ImGui.getIO();
-
-        // Configuration for ImGui:
-        int[] windowWidth = new int[1], windowHeight = new int[1];
-        glfwGetWindowSize(window.getWindow(), windowWidth, windowHeight);
-        int[] framebufferWidth = new int[1], framebufferHeight = new int[1];
-        glfwGetFramebufferSize(window.getWindow(), framebufferWidth, framebufferHeight);
-        float scaleX = (float) framebufferWidth[0] / (float) windowWidth[0];
-        float scaleY = (float) framebufferHeight[0] / (float) windowHeight[0];
-        io.setDisplaySize(windowWidth[0], windowHeight[0]);
-        io.setDisplayFramebufferScale(scaleX, scaleY);
-        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
-        io.setConfigFlags(ImGuiConfigFlags.NoMouseCursorChange); // Allows ImGui to change the cursor
-
-        // Map ImGui keys
-        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
-        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
-        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
-        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
-        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
-        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
-        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
-        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
-        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
-        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
-        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
-        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
-        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
-        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
-        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
-        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
-        io.setKeyMap(ImGuiKey.A, GLFW_KEY_A);
-        io.setKeyMap(ImGuiKey.C, GLFW_KEY_C);
-        io.setKeyMap(ImGuiKey.V, GLFW_KEY_V);
-        io.setKeyMap(ImGuiKey.X, GLFW_KEY_X);
-        io.setKeyMap(ImGuiKey.Y, GLFW_KEY_Y);
-        io.setKeyMap(ImGuiKey.Z, GLFW_KEY_Z);
-
-        // Initialize gui:
-        gui.init("#version 330");
-    }
-
-    private void render_imgui() {
-        ImGui.newFrame();
-        if (ImGui.beginMainMenuBar()) {
-            if (ImGui.beginMenu("Examples")) {
-                ImGui.menuItem("null");
-                ImGui.menuItem("Console");
-                ImGui.menuItem("Log");
-                ImGui.menuItem("Simple layout");
-                ImGui.menuItem("Property editor");
-                ImGui.menuItem("Long text display");
-                ImGui.menuItem("Auto-resizing window");
-                ImGui.menuItem("Constrained-resizing window");
-                ImGui.menuItem("Simple overlay");
-                ImGui.menuItem("Manipulating window titles");
-                ImGui.menuItem("Custom rendering");
-                ImGui.menuItem("Documents");
-                ImGui.endMenu();
-            }
-            ImGui.endMainMenuBar();
-        }
-        ImGui.setNextWindowSize(482, window.getHeight());
-        ImGui.setNextWindowPos(0, 20);
-        ImGui.begin("Banter Engine Settings");
-        show_ui();
-        ImGui.end();
-        ImGui.render();
-        gui.renderDrawData(ImGui.getDrawData());
-    }
-
-    private void show_ui() {
-        if (ImGui.checkbox("Wireframe Mode:", enable_wireframe[0])) {
-            enable_wireframe[0] = !enable_wireframe[0];
-        };
-        ImGui.sliderFloat("Mouse Sensitivity", MOUSE_SENSITIVITY, 0.0f, 1.0f);
-        ImGui.sliderFloat("Movement Speed", MOVEMENT_SPEED, 0.0f, 1.0f);
-
-    }
-
     // Updating any data that needs it:
     private void update() {
 
-        rotation += 1.5f;
-        if (rotation >= 360) {
-            rotation = 0;
-        }
-        rotate_entity(test0, 1, 0, 0, rotation, false);
-        rotate_entity(test1, 0, 1, 0, rotation, false);
-        rotate_entity(test2, 0, 0, 1, rotation, false);
+        // Removing sample rotation bit for now:
+        // rotation += 1.5f;
+        // if (rotation >= 360) {
+        //     rotation = 0;
+        // }
+        // rotate_entity(test0, 1, 0, 0, rotation, false);
+        // rotate_entity(test1, 0, 1, 0, rotation, false);
+        // rotate_entity(test2, 0, 0, 1, rotation, false);
     }
 
     private void render() {
@@ -283,15 +210,15 @@ public class Game {
         // glColor3f(1.0f, 1.0f, 1.0f);
         renderer.render();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        render_imgui();
+        gui_tools.render_gui();
         window.swap_buffers();
     }
 
     private void cleanup() {
         System.out.println("Banter Engine cleaning...");
         renderer.cleanup();
-        gui.dispose();
-        ImGui.destroyContext();
+        gui_tools.cleanup();
+        // ImGui.destroyContext();
         mouse.cleanup();
         window.cleanup();
         System.out.println("Banter Engine shutting down...");
@@ -347,8 +274,6 @@ public class Game {
         if (mouse.isRightButtonPressed()) {
             System.out.println("Mouse right button pressed!");
         }
-        System.out.println("mouse sensitivity:\t" + MOUSE_SENSITIVITY[0]);
-        System.out.println("deltaX:\t" + deltaX + "deltaY:\t" + deltaY);
         mouse.update();
         deltaX = 0;
         deltaY = 0;
@@ -368,9 +293,15 @@ public class Game {
     private void create_models_and_scenes() {
         // Create a model:
         RawModel model = new CubeModel().create_model();
+        RawModel light_cube_model = new LightCubeModel().create_model();
 
         // Create new entity, then add the model to the entity ... after add entity to
         // scene:
+        light_cube = new Entity("light_cube");
+        light_cube.addModel(light_cube_model);
+        position_entity(light_cube, 0.0f, 3.0f, 0.0f);
+        scene.add_entity(light_cube);
+
         test0 = new Entity("test0");
         test0.addModel(model);
         position_entity(test0, -2.0f, 0.0f, 0.0f);
@@ -398,7 +329,6 @@ public class Game {
 
     // Wireframe mode: TODO - Fix this method.
     public void wired() {
-        System.out.println("Wireframe mode toggled!");
         renderer.wired();
     }
 
