@@ -24,7 +24,6 @@ import models.entity.Entity;
 import models.entity.RawModel;
 import models.mesh.Mesh;
 import models.texture.Texture;
-import rendering.lights.SceneLights;
 import utils.Projection;
 import utils.UniformsMap;
 

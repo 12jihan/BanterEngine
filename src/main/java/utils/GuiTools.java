@@ -1,6 +1,7 @@
 package utils;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static imgui.ImGui.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,6 @@ import java.util.Map;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiKey;
@@ -28,15 +28,19 @@ public class GuiTools {
     private static float[] MOUSE_SENSITIVITY = { 0.20f };
     private static float[] MOVEMENT_SPEED = { 0.05f };
     private boolean[] enable_wireframe = new boolean[] { false };
-    private Map<String, float[][]> entity_map = new HashMap<String, float[][]>();
+    private boolean[] enable_rotation = new boolean[] { false, false, false };
+
+    private Map<String, float[]> entity_position = new HashMap<String, float[]>();
+    private Map<String, float[][]> entity_rotation = new HashMap<String, float[][]>();
+    private Map<String, float[]> entity_scale = new HashMap<String, float[]>();
 
     public void init(Window window, Scene scene) {
         this.scene = scene;
         this.window_class = window;
         this.window = window_class.getWindow();
         this.gui = new ImGuiImplGl3();
-        ImGui.createContext();
-        io = ImGui.getIO();
+        createContext();
+        io = getIO();
         main_gui_configs();
         imgui_key_maps();
 
@@ -45,117 +49,136 @@ public class GuiTools {
     };
 
     public void render_gui() {
-        ImGui.newFrame();
-        ImGui.begin("Banter Engine Settings");
+        newFrame();
+        begin("Banter Engine Settings");
         main_menu_bar();
         entity_ui();
-        show_demo();
-        ImGui.end();
-        ImGui.render();
-        gui.renderDrawData(ImGui.getDrawData());
+        // show_demo();
+        end();
+        render();
+        gui.renderDrawData(getDrawData());
     }
 
     private void main_menu_bar() {
-        if (ImGui.beginMainMenuBar()) {
-            if (ImGui.beginMenu("Examples")) {
-                ImGui.menuItem("null");
-                ImGui.menuItem("Console");
-                ImGui.menuItem("Log");
-                ImGui.menuItem("Simple layout");
-                ImGui.menuItem("Property editor");
-                ImGui.menuItem("Long text display");
-                ImGui.menuItem("Auto-resizing window");
-                ImGui.menuItem("Constrained-resizing window");
-                ImGui.menuItem("Simple overlay");
-                ImGui.menuItem("Manipulating window titles");
-                ImGui.menuItem("Custom rendering");
-                ImGui.menuItem("Documents");
-                ImGui.endMenu();
+        if (beginMainMenuBar()) {
+            if (beginMenu("Examples")) {
+                menuItem("null");
+                menuItem("Console");
+                menuItem("Log");
+                menuItem("Simple layout");
+                menuItem("Property editor");
+                menuItem("Long text display");
+                menuItem("Auto-resizing window");
+                menuItem("Constrained-resizing window");
+                menuItem("Simple overlay");
+                menuItem("Manipulating window titles");
+                menuItem("Custom rendering");
+                menuItem("Documents");
+                endMenu();
             }
-            ImGui.endMainMenuBar();
+            endMainMenuBar();
         }
-        ImGui.setNextWindowSize(482, window);
-        ImGui.setNextWindowPos(0, 20);
+        setNextWindowSize(482, window);
+        setNextWindowPos(0, 0);
     }
 
     private void entity_ui() {
-        if (ImGui.collapsingHeader("Entities: " + scene.get_entities().size())) {
+        if (collapsingHeader("Entities: " + scene.get_entities().size())) {
             for (Entity entity : scene.get_entities()) {
 
-                Entity_Obj sudo_entity = new Entity_Obj(entity);
-                Vector3f entity_position = entity.getPosition();
-                Quaternionf entity_rotation = entity.getRotation();
-                float entity_scale = entity.getScale();
+                // Data formation: TODO figure out how to make all this more efficient:
+                Entity_Obj entity_transform_data = new Entity_Obj(entity);
 
-                // If key already exists skip it:
-                if (!entity_map.containsKey(entity.getId())) {
-                    // Special Object created for the data that I need;
-                    entity_map.put(entity.getId(), new float[][] { sudo_entity.get_position(),
-                            sudo_entity.get_rotation(), sudo_entity.getScale() });
+                // If key already exists skip it for position rotation and scale:
+                if (!entity_position.containsKey(entity.getId())) {
+                    entity_position.put(entity.getId(), entity_transform_data.get_position());
+                }
+                if (!entity_rotation.containsKey(entity.getId())) {
+                    entity_rotation.put(entity.getId(), entity_transform_data.get_rotation());
+                }
+                if (!entity_scale.containsKey(entity.getId())) {
+                    entity_scale.put(entity.getId(), entity_transform_data.get_scale());
                 }
 
                 // Each entity's data:
-                if (ImGui.treeNode(entity.getId())) {
+                if (treeNode(entity.getId())) {
                     // Entity Position:
-                    if (ImGui.treeNode("Position")) {
-                        ImGui.labelText("X:", String.valueOf(entity_position.x));
-                        ImGui.labelText("Y:", String.valueOf(entity_position.y));
-                        ImGui.labelText("Z:", String.valueOf(entity_position.z));
+                    if (treeNode("Position")) {
+                        labelText("X:", String.valueOf(entity.getPosition().x));
+                        labelText("Y:", String.valueOf(entity.getPosition().y));
+                        labelText("Z:", String.valueOf(entity.getPosition().z));
 
-                        if (ImGui.dragFloat3("Position Change", entity_map.get(entity.getId())[0],
+                        if (dragFloat3("Position Change", entity_position.get(entity.getId()),
                                 0.001f,
                                 -20.00f,
                                 20.00f,
                                 "%0.02f")) {
-                                    System.out.println(entity_map.get(entity.getId())[2][0]);
+
                             entity.setPosition(
-                                    entity_map.get(entity.getId())[0][0],
-                                    entity_map.get(entity.getId())[0][1],
-                                    entity_map.get(entity.getId())[0][2]);
+                                    entity_position.get(entity.getId())[0],
+                                    entity_position.get(entity.getId())[1],
+                                    entity_position.get(entity.getId())[2]);
                             entity.updateModelMatrix();
                         }
 
-                        if (ImGui.dragFloat3("Rotation Change", entity_map.get(entity.getId())[0],
-                                0.001f,
-                                -20.00f,
-                                20.00f,
-                                "%0.02f")) {
-                                    System.out.println(entity_map.get(entity.getId())[2][0]);
-                            entity.setPosition(
-                                    entity_map.get(entity.getId())[0][0],
-                                    entity_map.get(entity.getId())[0][1],
-                                    entity_map.get(entity.getId())[0][2]);
-                            entity.updateModelMatrix();
-                        }
-                        ImGui.treePop();
+                        treePop();
                     }
 
                     // Entity Rotation:
-                    if (ImGui.treeNode("Rotation")) {
-                        ImGui.labelText("X:", String.valueOf(entity.getRotation().x));
-                        ImGui.labelText("Y:", String.valueOf(entity.getRotation().y));
-                        ImGui.labelText("Z:", String.valueOf(entity.getRotation().z));
-                        ImGui.treePop();
+                    if (treeNode("Rotation")) {
+                        labelText("X", String.valueOf(entity.getRotation().x));
+                        labelText("Y", String.valueOf(entity.getRotation().y));
+                        labelText("Z", String.valueOf(entity.getRotation().z));
+
+                        // labelText("", "Edit Rotation:");
+                        text("Edit Rotation:");
+                        if (checkbox("X", enable_rotation[0])) {
+                            enable_rotation[0] = !enable_rotation[0];
+                        }
+
+                        if (checkbox("Y", enable_rotation[1])) {
+                            enable_rotation[1] = !enable_rotation[1];
+                        }
+
+                        if (checkbox("Z", enable_rotation[2])) {
+                            enable_rotation[2] = !enable_rotation[2];
+                        }
+
+                        if (enable_rotation[0] || enable_rotation[1] || enable_rotation[2]) {
+                            if (sliderAngle("Rotation Change", entity_rotation.get(entity.getId())[0])) {
+                                entity.setRotation(
+                                        enable_rotation[0] ? 1.0f : 0.0f,
+                                        enable_rotation[1] ? 1.0f : 0.0f,
+                                        enable_rotation[2] ? 1.0f : 0.0f,
+                                        entity_rotation.get(entity.getId())[0][0]);
+                                entity.updateModelMatrix();
+                            }
+                        }
+                        treePop();
                     }
 
                     // Entity Scale:
-                    if (ImGui.treeNode("Scale")) {
-                        ImGui.labelText("size:", String.valueOf(entity.getScale()));
-                        ImGui.treePop();
+                    if (treeNode("Scale")) {
+                        text("Scale");
+                        if (dragFloat("Scaler", entity_scale.get(entity.getId()), 0.001f, 0.01f, 10.00f, "%0.02f")) {
+                            entity.setScale(entity_scale.get(entity.getId())[0]);
+                            entity.updateModelMatrix();
+                        }
+                        treePop();
                     }
 
-                    ImGui.treePop();
+                    treePop();
                 }
             }
         }
     }
 
     private void show_demo() {
-        ImGui.showDemoWindow();
+        showDemoWindow();
     }
 
     private void main_gui_configs() {
-        // ImGuiIO io = ImGui.getIO();
+        // ImGuiIO io = getIO();
         // Configuration for ImGui:
         int[] window_width = new int[1], window_height = new int[1];
         glfwGetWindowSize(window_class.getWindow(), window_width, window_height);
@@ -205,6 +228,6 @@ public class GuiTools {
 
     public void cleanup() {
         gui.dispose();
-        ImGui.destroyContext();
+        destroyContext();
     }
 }

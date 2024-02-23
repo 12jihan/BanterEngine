@@ -24,11 +24,19 @@ public class Entity_Obj {
         return new float[] { position.x, position.y, position.z };
     }
 
-    public float[] get_rotation() {
-        return new float[] { rotation.x, rotation.y, rotation.z };
+    public float[][] get_rotation() {
+        float[] main = new float[] { rotation.x, rotation.y, rotation.z, entity.getAngle() };
+        // [0] = x, [1] = y, [2] = z, [3] = angle:
+        float[][] returnable = new float[][] {
+            new float[] { main[0] },
+            new float[] { main[1] },
+            new float[] { main[2] },
+            new float[] { main[3] },
+        };
+        return returnable;
     }
 
-    public float[] getScale() {
+    public float[] get_scale() {
         return new float[] { scale };
     }
 
