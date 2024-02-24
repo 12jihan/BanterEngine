@@ -3,6 +3,8 @@
 /Users/jareemhoff/dev/java/banter/src/main/java/models/mesh/EBO.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/mesh/VAO.java
 /Users/jareemhoff/dev/java/banter/src/main/java/io/Window.java
+/Users/jareemhoff/dev/java/banter/src/main/java/models/entity/Entity_Obj.java
+/Users/jareemhoff/dev/java/banter/src/main/java/rendering/lights/AmbientLight.java
 /Users/jareemhoff/dev/java/banter/src/main/java/utils/Projection.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/entity/AssimpModelLoader.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/texture/TextureCache.java
@@ -12,13 +14,16 @@
 /Users/jareemhoff/dev/java/banter/src/main/java/models/TerrainModel.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/entity/Entity.java
 /Users/jareemhoff/dev/java/banter/src/main/java/rendering/Renderer.java
+/Users/jareemhoff/dev/java/banter/src/main/java/utils/GuiTools.java
 /Users/jareemhoff/dev/java/banter/src/main/java/rendering/Camera.java
+/Users/jareemhoff/dev/java/banter/src/main/java/models/LightCubeModel.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/mesh/VBO.java
 /Users/jareemhoff/dev/java/banter/src/main/java/utils/TimeManager.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/texture/Texture.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/entity/ModelLoader.java
 /Users/jareemhoff/dev/java/banter/src/main/java/models/TerrainGenerator.java
 /Users/jareemhoff/dev/java/banter/src/main/java/display/WindowManager.java
+/Users/jareemhoff/dev/java/banter/src/main/java/rendering/SceneLights.java
 /Users/jareemhoff/dev/java/banter/src/main/java/rendering/Scene.java
 /Users/jareemhoff/dev/java/banter/src/main/java/input/KeyboardInput.java
 /Users/jareemhoff/dev/java/banter/src/main/java/utils/UniformsMap.java
